@@ -14,11 +14,10 @@
 
 class Measurement {
 private:
-	std::array<uint16_t, 6> PhaseCurrentB;
+	std::array<uint16_t, 6> DCCurrent;
 	std::array<uint16_t, 6> DCVoltage;
 	std::array<uint16_t, 6> BEMF;
 
-	float currentBaseB;
 public:
 	Measurement(){
 
@@ -26,12 +25,12 @@ public:
 
 	void DMA_Init();
 
-	float GetPhaseCurrentB(void){
+	float GetDCCurrent(void){
 		float current = 0;
 		for(int i = 0 ; i < CONVERSIONS_COUNT; i++){
-			current += PhaseCurrentB[i];
+			current += DCCurrent[i];
 		}
-		return ((current - currentBaseB) * CURRENT_CONV_COEF);
+		return (current * CURRENT_CONV_COEF);
 	}
 
 	float GetDCVoltage(void){

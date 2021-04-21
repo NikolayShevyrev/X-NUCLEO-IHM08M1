@@ -10,7 +10,7 @@
 
 #include "main.h"
 
-struct GeneralSettings {
+struct MainSettings {
 	uint16_t fpwm;
 	uint16_t numberOfConversions;
 	float	 currentConvCoef;
@@ -18,7 +18,7 @@ struct GeneralSettings {
 	float 	 bemfConvCoef;
 };
 
-void FillGeneralSettings(GeneralSettings& settings);
+void FillMainSettings(MainSettings& settings);
 
 struct SixStepCommSettings {
 	uint16_t pole_pairs;

@@ -7,7 +7,7 @@
 
 #include "settings.h"
 
-void FillGeneralSettings(GeneralSettings& settings){
+void FillMainSettings(MainSettings& settings){
 	settings.fpwm 					= 20000;
 	settings.numberOfConversions 	= 6;
 	settings.currentConvCoef 		= (float)(0.001F / (float)settings.numberOfConversions);

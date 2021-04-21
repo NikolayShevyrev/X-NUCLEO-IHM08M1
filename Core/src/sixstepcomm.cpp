@@ -7,7 +7,7 @@
 
 #include "sixstepcomm.h"
 
-void SixStepCommutation::Init(SixStepCommSettings& settings, GeneralSettings mainSettings){
+void SixStepCommutation::Init(const SixStepCommSettings& settings, const MainSettings mainSettings){
 	StartUp.duty 			= (uint16_t)((float)pwmTimer->GetPWMPeriod() * settings.startup_duty);
 	StartUp.rpm 			= settings.startup_rpm;
 	pole_pairs 				= settings.pole_pairs;

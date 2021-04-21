@@ -109,7 +109,7 @@ public:
 
 	}
 
-	void Init(SixStepCommSettings& motorSettings, GeneralSettings mainSettings);
+	void Init(const SixStepCommSettings& motorSettings, const MainSettings mainSettings);
 
 	void SetDiraction(Diraction dir){
 		Flags.diraction = dir;

@@ -7,6 +7,8 @@
 
 
 #include "motordrive.h"
+#include "sixstepcomm.h"
+#include "measurement.h"
 
 /*
  * Stopped State Handlers

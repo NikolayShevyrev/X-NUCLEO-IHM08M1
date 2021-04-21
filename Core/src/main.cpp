@@ -6,6 +6,7 @@
  */
 
 #include "main.h"
+#include "measurement.h"
 #include "gpio.h"
 #include "timers.h"
 #include "settings.h"
@@ -19,8 +20,9 @@ Timer1 timer1;
 Timer2 timer2;
 Timer6 timer6;
 
+Measurement meas;
 SixStepCommSettings motorSettings;
-GeneralSettings mainSettings;
+MainSettings mainSettings;
 
 SixStepCommutation motor(&timer1, &timer2, &timer6);
 
@@ -32,8 +34,11 @@ int main(){
 	SystemClock_Config();
 
 	/* Settings */
-	FillGeneralSettings(mainSettings);
+	FillMainSettings(mainSettings);
 	FillSixStepCommSettings(motorSettings);
+
+	/* Init Motor */
+	motor.Init(motorSettings, mainSettings);
 
 	/* Initialize all configured peripherals */
 	GPIO_Init();
