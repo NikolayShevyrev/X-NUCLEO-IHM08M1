@@ -75,6 +75,12 @@ private:
 		bool bemfDetection = false;
 	} Flags;
 
+	struct {
+		float dcCurrent;
+		float dcVoltage;
+		float temperature;
+	} Feedback;
+
 	uint8_t commSector;
 	uint16_t comparatorOutputs;
 
@@ -109,10 +115,22 @@ public:
 
 	}
 
-	void Init(const SixStepCommSettings& motorSettings, const MainSettings mainSettings);
+	void Init(const SixStepCommSettings& motorSettings);
 
 	void SetDiraction(Diraction dir){
 		Flags.diraction = dir;
+	}
+
+	void SetDCCurrent(float current){
+		Feedback.dcCurrent = current;
+	}
+
+	void SetDCVoltage(float voltage){
+		Feedback.dcVoltage = voltage;
+	}
+
+	void SetTemperature(float temp){
+		Feedback.temperature = temp;
 	}
 
 	void Start();

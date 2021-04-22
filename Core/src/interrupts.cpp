@@ -10,6 +10,7 @@
 #include "main.h"
 #include "delay.h"
 #include "gpio.h"
+#include "dma.h"
 #include "dfilter.h"
 #include "motordrive.h"
 
@@ -31,10 +32,14 @@ void TIM1_UP_TIM16_IRQHandler(void) {
 
 }
 
-void TIM6_DAC_IRQHandler(void) {
-	/*extern Timer6 timer6;
+/**
+  * @brief  DMA1 Channel 1 Interrupt Service Routine
+  * @retval None
+  */
+void DMA1_Channel1_IRQHandler(void) {
+	extern DMA1Channel1 dma1ch1;
 
-	timer6.ClearUIF();*/
+	dma1ch1.TransferCompleteInterruptFlagClear();
 }
 
 

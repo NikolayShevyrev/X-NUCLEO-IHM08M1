@@ -21,6 +21,7 @@ struct MainSettings {
 void FillMainSettings(MainSettings& settings);
 
 struct SixStepCommSettings {
+	uint16_t fpwm;
 	uint16_t pole_pairs;
 	float	 startup_duty;
 	uint16_t startup_rpm;

@@ -16,6 +16,7 @@ void FillMainSettings(MainSettings& settings){
 }
 
 void FillSixStepCommSettings(SixStepCommSettings& settings){
+	settings.fpwm 			= 20000;
 	settings.pole_pairs 	= 4;
 	settings.startup_duty 	= 0.3;
 	settings.startup_rpm 	= 500;

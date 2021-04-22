@@ -7,7 +7,7 @@
 
 #include "sixstepcomm.h"
 
-void SixStepCommutation::Init(const SixStepCommSettings& settings, const MainSettings mainSettings){
+void SixStepCommutation::Init(const SixStepCommSettings& settings){
 	StartUp.duty 			= (uint16_t)((float)pwmTimer->GetPWMPeriod() * settings.startup_duty);
 	StartUp.rpm 			= settings.startup_rpm;
 	pole_pairs 				= settings.pole_pairs;
@@ -25,7 +25,7 @@ void SixStepCommutation::Init(const SixStepCommSettings& settings, const MainSet
 	timer_min 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)rpmTimer->GetPSC_32() * (float)maxRPM));
 	timer_max 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)rpmTimer->GetPSC_32() * (float)StartUp.rpm));
 
-	maxDuty = (uint16_t)((float)mainSettings.fpwm * (float)0.1);
+	maxDuty = (uint16_t)((float)settings.fpwm * (float)0.1);
 	minDuty = pwmTimer->GetPWMPeriod();
 
 	stallLimit 		= 14000;

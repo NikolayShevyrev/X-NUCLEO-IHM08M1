@@ -27,7 +27,8 @@ public:
 	}
 
 	virtual void Timer1InterruptHandler() = 0;
-	virtual void DMAInterruptHandler() = 0;
+	virtual void DMA1InterruptHandler() = 0;
+	virtual void DMA2InterruptHandler() = 0;
 };
 
 class MotorDrive {
@@ -55,8 +56,12 @@ public:
 		this->currentState_->Timer1InterruptHandler();
 	}
 
-	void DMAInterruptHandler(){
-		this->currentState_->DMAInterruptHandler();
+	void DMA1InterruptHandler(){
+		this->currentState_->DMA1InterruptHandler();
+	}
+
+	void DMA2InterruptHandler(){
+		this->currentState_->DMA2InterruptHandler();
 	}
 
 };
@@ -64,13 +69,15 @@ public:
 class StoppedState : public State {
 public:
 	virtual void Timer1InterruptHandler() override;
-	virtual void DMAInterruptHandler() override;
+	virtual void DMA1InterruptHandler() override;
+	virtual void DMA2InterruptHandler() override;
 };
 
 class StartingState : public State {
 public:
 	virtual void Timer1InterruptHandler() override;
-	virtual void DMAInterruptHandler() override;
+	virtual void DMA1InterruptHandler() override;
+	virtual void DMA2InterruptHandler() override;
 };
 
 

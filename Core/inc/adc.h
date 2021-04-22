@@ -38,6 +38,7 @@ enum ADC_DMA_mode {
 	Circular
 };
 
+
 class ADC {
 protected:
 	ADC_TypeDef * base_;
@@ -45,9 +46,13 @@ public:
 	ADC(ADC_TypeDef * base) : base_(base){
 	}
 
-	virtual void Init();
+	virtual void Init(){
 
-	virtual void PinsInit();
+	}
+
+	virtual void PinsInit(){
+
+	}
 
 	void ClockEnable(ADCClockDiv div) const {
 		if((base_ == ADC1)|| (base_ == ADC2)){
@@ -180,6 +185,13 @@ public:
 		}
 	}
 
+	void InjectedSequenceLength(uint16_t length){
+		SET_BIT(base_->JSQR, ((length-1) << ADC_JSQR_JL_Pos));
+	}
+
+	void ConvertionInInjectedSequence(uint16_t convertion, uint16_t channel){
+		SET_BIT(base_->JSQR, (channel << (2U + 6 * convertion)));
+	}
 
 };
 
@@ -195,15 +207,6 @@ public:
 class ADC_2 : public ADC {
 public:
 	ADC_2() : ADC(ADC2){
-	}
-
-	virtual void Init();
-	virtual void PinsInit();
-};
-
-class ADC_3 : public ADC {
-public:
-	ADC_3() : ADC(ADC3){
 	}
 
 	virtual void Init();

@@ -7,6 +7,9 @@
 
 #include "adc.h"
 
+/*
+ * ADC1 for Current, Voltage and Temperature measurement
+ */
 void ADC_1::Init(){
 
 	PinsInit();
@@ -15,16 +18,17 @@ void ADC_1::Init(){
 	VoltageRegulatorEnable();
 	Calibration(SingleEnded);
 
-	ContiuousConvertionMode();
+	SingleConvertionMode();
 	DMAEnable();
 	DMAConfiguration(Circular);
 	DelayedConversionMode();
 
-	RegularSequenceLength(1);
-	ConvertionInRegularSequence(1, 11);
+	RegularSequenceLength(3);
+	ConvertionInRegularSequence(1, 7);
+	ConvertionInRegularSequence(2, 2);
+	ConvertionInRegularSequence(3, 8);
 
 	Enable();
-	StartRegularConv();
 
 }
 
@@ -33,14 +37,22 @@ void ADC_1::PinsInit(){
 	 * Ports Clock Enable
 	 */
 	GPIO_PortClockInit(CURRB);
+	GPIO_PortClockInit(VBUS);
+	GPIO_PortClockInit(TEMP);
 
 	/*
-	 * PC1 -> Current B Channel 11
+	 * PC1 -> Current B 	Channel 7
+	 * PA1 -> VBUS 			Channel 2
+	 * PC2 -> Temperature	Channel 8
 	 */
 	GPIO_AnalogPinInit(CURRB);
-
+	GPIO_AnalogPinInit(VBUS);
+	GPIO_AnalogPinInit(TEMP);
 }
 
+/*
+ *  ADC2 for BEFM measurement
+ */
 void ADC_2::Init(){
 
 	PinsInit();
@@ -49,17 +61,17 @@ void ADC_2::Init(){
 	VoltageRegulatorEnable();
 	Calibration(SingleEnded);
 
-	ContiuousConvertionMode();
+	SingleConvertionMode();
 	DMAEnable();
 	DMAConfiguration(Circular);
 	DelayedConversionMode();
 
-	RegularSequenceLength(1);
-	ConvertionInRegularSequence(1, 13);
+	RegularSequenceLength(3);
+	ConvertionInRegularSequence(1, 9);
+	ConvertionInRegularSequence(2, 5);
+	ConvertionInRegularSequence(3, 11);
 
 	Enable();
-	StartRegularConv();
-
 }
 
 void ADC_2::PinsInit(){
@@ -71,49 +83,12 @@ void ADC_2::PinsInit(){
 	GPIO_PortClockInit(BEMF3);
 
 	/*
-	 * PC3 -> BEMF1 Channel 13
-	 * PC4 -> BEMF2 Channel 14
-	 * PC5 -> BEMF3 Channel 15
+	 * PC3 -> BEMF1 Channel 9
+	 * PC4 -> BEMF2 Channel 5
+	 * PC5 -> BEMF3 Channel 11
 	 */
 	GPIO_AnalogPinInit(BEMF1);
 	GPIO_AnalogPinInit(BEMF2);
 	GPIO_AnalogPinInit(BEMF3);
-
-}
-
-void ADC_3::Init(){
-
-	PinsInit();
-
-	ClockEnable(DivBy1);
-	VoltageRegulatorEnable();
-	Calibration(SingleEnded);
-
-	ContiuousConvertionMode();
-	DMAEnable();
-	DMAConfiguration(Circular);
-	DelayedConversionMode();
-
-	RegularSequenceLength(1);
-	ConvertionInRegularSequence(1, 1);
-
-	Enable();
-	StartRegularConv();
-
-}
-
-void ADC_3::PinsInit(){
-	/*
-	 * Ports Clock Enable
-	 */
-	GPIO_PortClockInit(VBUS);
-	GPIO_PortClockInit(TEMP);
-
-	/*
-	 * PA1 -> VBUS 			Channel 1
-	 * PC2 -> Temperature	Channel ?
-	 */
-	GPIO_AnalogPinInit(VBUS);
-	GPIO_AnalogPinInit(TEMP);
 
 }

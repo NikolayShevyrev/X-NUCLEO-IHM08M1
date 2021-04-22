@@ -6,9 +6,10 @@
  */
 
 #include "main.h"
-#include "measurement.h"
 #include "gpio.h"
 #include "timers.h"
+#include "adc.h"
+#include "dma.h"
 #include "settings.h"
 #include "sixstepcomm.h"
 #include "motordrive.h"
@@ -20,9 +21,10 @@ Timer1 timer1;
 Timer2 timer2;
 Timer6 timer6;
 
-Measurement meas;
+ADC_1 adc1;
+DMA1Channel1 dma1ch1;
+
 SixStepCommSettings motorSettings;
-MainSettings mainSettings;
 
 SixStepCommutation motor(&timer1, &timer2, &timer6);
 
@@ -34,15 +36,16 @@ int main(){
 	SystemClock_Config();
 
 	/* Settings */
-	FillMainSettings(mainSettings);
 	FillSixStepCommSettings(motorSettings);
 
 	/* Init Motor */
-	motor.Init(motorSettings, mainSettings);
+	motor.Init(motorSettings);
 
 	/* Initialize all configured peripherals */
 	GPIO_Init();
-	timer1.Init(mainSettings.fpwm);
+	timer1.Init(motorSettings.fpwm);
+	adc1.Init();
+	dma1ch1.Init();
 
 	while(1){
 
