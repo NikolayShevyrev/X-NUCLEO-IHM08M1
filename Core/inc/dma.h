@@ -89,6 +89,14 @@ public:
 
 	}
 
+	void ClockEnable(){
+		if(dma_base == DMA1){
+			SET_BIT(RCC->AHBENR, RCC_AHBENR_DMA1EN);
+		} else if(dma_base == DMA2){
+			SET_BIT(RCC->AHBENR, RCC_AHBENR_DMA2EN);
+		}
+	}
+
 	void PriorityLevel(PriorityLevels level){
 		if(!READ_BIT(ch_base->CCR, DMA_CCR_EN)){
 			SET_BIT(ch_base->CCR, level << DMA_CCR_PL_Pos);
@@ -142,7 +150,7 @@ public:
 	}
 
 	void TransferCompleteInterruptFlagClear(){
-		SET_BIT(dma_base->IFCR, DMA_IFCR_CTCIF1 << (DMA_IFCR_CTCIF1_Pos+4*(channel-1)));
+		SET_BIT(dma_base->IFCR, (0x1UL << (DMA_IFCR_CTCIF1_Pos+4*(channel-1))));
 	}
 
 	void ChannelEnable(){

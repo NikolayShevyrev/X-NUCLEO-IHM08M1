@@ -23,23 +23,19 @@ void ADC_1::Init(){
 	DMAConfiguration(Circular);
 	DelayedConversionMode();
 
-	RegularSequenceLength(3);
-	ConvertionInRegularSequence(1, 7);
+	RegularSequenceLength(CONVERSIONS_COUNT*3);
+	ConvertionInRegularSequence(1, 8);
 	ConvertionInRegularSequence(2, 2);
-	ConvertionInRegularSequence(3, 8);
+	ConvertionInRegularSequence(3, 7);
+	ConvertionInRegularSequence(4, 8);
+	ConvertionInRegularSequence(5, 2);
+	ConvertionInRegularSequence(6, 7);
 
 	Enable();
 
 }
 
 void ADC_1::PinsInit(){
-	/*
-	 * Ports Clock Enable
-	 */
-	GPIO_PortClockInit(CURRB);
-	GPIO_PortClockInit(VBUS);
-	GPIO_PortClockInit(TEMP);
-
 	/*
 	 * PC1 -> Current B 	Channel 7
 	 * PA1 -> VBUS 			Channel 2
@@ -76,13 +72,6 @@ void ADC_2::Init(){
 
 void ADC_2::PinsInit(){
 	/*
-	 * Ports Clock Enable
-	 */
-	GPIO_PortClockInit(BEMF1);
-	GPIO_PortClockInit(BEMF2);
-	GPIO_PortClockInit(BEMF3);
-
-	/*
 	 * PC3 -> BEMF1 Channel 9
 	 * PC4 -> BEMF2 Channel 5
 	 * PC5 -> BEMF3 Channel 11
@@ -90,5 +79,4 @@ void ADC_2::PinsInit(){
 	GPIO_AnalogPinInit(BEMF1);
 	GPIO_AnalogPinInit(BEMF2);
 	GPIO_AnalogPinInit(BEMF3);
-
 }

@@ -8,11 +8,11 @@
 #include "delay.h"
 
 void DelayUS(uint32_t us) {
-	uint32_t nCount = ((SystemCoreClock/10000000)*us)/3;
+	uint32_t nCount = ((SystemCoreClock/10000000)*us*0.588);
 	for(; nCount != 0; nCount--);
 }
 
 void DelayMS(uint32_t ms) {
-	uint32_t nCount = ((SystemCoreClock/10000)*ms)/3;
+	uint32_t nCount = ((SystemCoreClock/10000)*ms*0.588);
 	for(; nCount != 0; nCount--);
 }

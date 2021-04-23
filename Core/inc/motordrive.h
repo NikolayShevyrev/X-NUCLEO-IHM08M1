@@ -37,7 +37,7 @@ private:
 
 public:
 	MotorDrive(State * state) : currentState_(nullptr) {
-
+		currentState_ = state;
 	}
 
 	~MotorDrive() {

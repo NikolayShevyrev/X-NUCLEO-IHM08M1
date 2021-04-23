@@ -47,7 +47,9 @@ int main(){
 	adc1.Init();
 	dma1ch1.Init();
 
-	while(1){
+	timer1.Start();
+	timer1.PWMOutputsOn();
 
+	while(1){
 	}
 }

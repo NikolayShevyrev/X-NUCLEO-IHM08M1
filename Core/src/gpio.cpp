@@ -60,8 +60,7 @@ void GPIO_Init(void){
 	 * Ports Clock Enable
 	 */
 	SYSCFGClockEnable();
-	GPIO_PortClockInit(LedX);
-	GPIO_PortClockInit(Button);
+	GPIO_AllPortsClockEnable();
 
 	/*
 	 * User LEDs

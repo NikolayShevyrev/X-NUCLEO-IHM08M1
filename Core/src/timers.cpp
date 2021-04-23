@@ -56,7 +56,7 @@ void Timer1::Init(uint16_t pwmFrequnce){
 	/*
 	 * Enabling Capture/Compare channels
 	 */
-	SET_BIT(TIM1->CCER, /*TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E |*/
+	SET_BIT(TIM1->CCER, TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E |
 						TIM_CCER_CC1NE | TIM_CCER_CC2NE | TIM_CCER_CC3NE);
 
 	/*
@@ -98,16 +98,6 @@ void Timer1::Init(uint16_t pwmFrequnce){
 
 void Timer1::PinsInit(){
 	/*
-	 * Ports Clock Enable
-	 */
-	GPIO_PortClockInit(UH);
-	GPIO_PortClockInit(UL);
-	GPIO_PortClockInit(VH);
-	GPIO_PortClockInit(VL);
-	GPIO_PortClockInit(WH);
-	GPIO_PortClockInit(WL);
-
-	/*
 	 * PWM Pins
 	 * PA8 	-> UH
 	 * PB15 -> UL
@@ -116,13 +106,12 @@ void Timer1::PinsInit(){
 	 * PA10 -> WH
 	 * PB1  -> WL
 	 */
-	GPIO_AFPinInit(UH, PushPull, VeryHigh, NoPull, AF1);
-	GPIO_AFPinInit(VH, PushPull, VeryHigh, NoPull, AF1);
-	GPIO_AFPinInit(WH, PushPull, VeryHigh, NoPull, AF1);
-	GPIO_AFPinInit(UL, PushPull, VeryHigh, NoPull, AF1);
-	GPIO_AFPinInit(VL, PushPull, VeryHigh, NoPull, AF1);
-	GPIO_AFPinInit(WL, PushPull, VeryHigh, NoPull, AF1);
-
+	GPIO_AFPinInit(UH, PushPull, VeryHigh, NoPull, AF6);
+	GPIO_AFPinInit(VH, PushPull, VeryHigh, NoPull, AF6);
+	GPIO_AFPinInit(WH, PushPull, VeryHigh, NoPull, AF6);
+	GPIO_AFPinInit(UL, PushPull, VeryHigh, NoPull, AF4);
+	GPIO_AFPinInit(VL, PushPull, VeryHigh, NoPull, AF6);
+	GPIO_AFPinInit(WL, PushPull, VeryHigh, NoPull, AF6);
 }
 
 void Timer2::Init(){
@@ -199,13 +188,6 @@ void Timer2::InitHall(){
 }
 
 void Timer2::PinsInit(){
-	/*
-	 * Ports Clock Enable
-	 */
-	GPIO_PortClockInit(HALL1);
-	GPIO_PortClockInit(HALL2);
-	GPIO_PortClockInit(HALL3);
-
 	/*
 	 * Timer 2 Pins
 	 * PA15 -> HALL1_IN

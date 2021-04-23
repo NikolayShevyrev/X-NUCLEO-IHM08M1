@@ -26,6 +26,7 @@ public:
 /* Variables ---------------------------------------------------------*/
 // LEDs
 extern const gpio_t LedX;
+extern const gpio_t Led2;
 
 // Buttons
 extern const gpio_t Button;
@@ -108,6 +109,13 @@ void GPIO_Init(void);
 static inline void SYSCFGClockEnable(){
 	SET_BIT(RCC->APB2ENR, RCC_APB2ENR_SYSCFGEN);
 }
+
+static inline void GPIO_AllPortsClockEnable(){
+	SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOAEN);
+	SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOBEN);
+	SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOCEN);
+}
+
 static inline void GPIO_PortClockInit(gpio_t gpio)
 {
 	switch((uint32_t)gpio.port) {
