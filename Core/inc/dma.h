@@ -9,7 +9,7 @@
 #define INC_DMA_H_
 
 #include "main.h"
-#include <array>
+#include "gpio.h"
 #include "dfilter.h"
 
 enum PriorityLevels {
@@ -318,7 +318,7 @@ public:
 
 class DMA1Channel1 : public DMA {
 private:
-	std::array<uint32_t, (CONVERSIONS_COUNT*3)> data;
+	uint32_t data[CONVERSIONS_COUNT*3];
 public:
 	DMA1Channel1() : DMA(DMA1, 1){
 	}
@@ -327,7 +327,7 @@ public:
 
 	float GetDCCurrent(void){
 		float current = 0;
-		for(int i = 0 ; i < (CONVERSIONS_COUNT*3); i+=3){
+		for(int i = 2 ; i < (CONVERSIONS_COUNT*3); i+=3){
 			current += data[i];
 		}
 		return (current * CURRENT_CONV_COEF);
@@ -336,7 +336,7 @@ public:
 	float GetDCVoltage(void){
 		static dFilter<float, 16> voltageFilter;
 		float voltage = 0;
-		for(int i = 0 ; i < (CONVERSIONS_COUNT*3); i+=3){
+		for(int i = 1 ; i < (CONVERSIONS_COUNT*3); i+=3){
 			voltage += data[i];
 		}
 		voltage = voltage * VOLTAGE_CONV_COEF;
@@ -346,7 +346,7 @@ public:
 	float GetTemp(void){
 		static dFilter<float, 32> tempFilter;
 		float temp = 0;
-		for(int i = 2 ; i < (CONVERSIONS_COUNT*3); i+=3){
+		for(int i = 0 ; i < (CONVERSIONS_COUNT*3); i+=3){
 			temp += data[i];
 		}
 		temp = temp * TEMP_CONV_COEF;
@@ -356,7 +356,7 @@ public:
 
 class DMA2Channel1 : public DMA {
 private:
-	std::array<uint32_t, 3> data;
+	uint32_t data[3];
 public:
 	DMA2Channel1() : DMA(DMA2, 1){
 	}

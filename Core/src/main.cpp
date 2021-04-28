@@ -12,9 +12,9 @@
 #include "dma.h"
 #include "settings.h"
 #include "sixstepcomm.h"
-#include "motordrive.h"
 #include "delay.h"
 
+void CheckButton(void);
 
 /* Variables ---------------------------------------------------------*/
 Timer1 timer1;
@@ -28,7 +28,7 @@ SixStepCommSettings motorSettings;
 
 SixStepCommutation motor(&timer1, &timer2, &timer6);
 
-MotorDrive drive(new StoppedState);
+state currentState = Stopped;
 
 int main(){
 
@@ -51,5 +51,23 @@ int main(){
 	timer1.PWMOutputsOn();
 
 	while(1){
+		CheckButton();
 	}
+}
+
+/**
+  * @brief  Does stuff if user button was pressed
+  * @retval None
+  */
+void CheckButton(void){
+	if(GPIO_ReadPin(Button)){
+		DelayUS(10);
+		while(GPIO_ReadPin(Button)){
+			DelayUS(10);
+		}
+		/* Do somesthing */
+		currentState = Starting;
+		GPIO_SetPin(LedX);
+	}
+
 }

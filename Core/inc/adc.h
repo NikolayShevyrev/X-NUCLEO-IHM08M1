@@ -38,6 +38,13 @@ enum ADC_DMA_mode {
 	Circular
 };
 
+enum HardwareTrigger {
+	Disabled				= 0b00,
+	RisingEdge				= 0b01,
+	FallingEdge				= 0b10,
+	RisingAndFallingEdges	= 0b11
+};
+
 
 class ADC {
 protected:
@@ -122,6 +129,18 @@ public:
 	void StopInjectedConv() const {
 		if(READ_BIT(base_->CR, ADC_CR_JADSTART) && !READ_BIT(base_->CR, ADC_CR_ADDIS)){
 			SET_BIT(base_->CR, ADC_CR_JADSTP);
+		}
+	}
+
+	void ExternalTriggerEnableRegularChannels(HardwareTrigger trigger){
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART)){
+			SET_BIT(base_->CFGR, trigger << ADC_CFGR_EXTEN_Pos);
+		}
+	}
+
+	void ExternalTriggerSelectionRegularChannels(uint16_t event){
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART)){
+			SET_BIT(base_->CFGR, event << ADC_CFGR_EXTSEL_Pos);
 		}
 	}
 

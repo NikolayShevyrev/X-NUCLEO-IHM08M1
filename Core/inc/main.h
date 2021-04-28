@@ -18,10 +18,17 @@ void SystemClock_Config(void);
 #define FPWM (uint16_t)20000
 #define CONVERSIONS_COUNT 2
 
-#define CURRENT_CONV_COEF 	(float)(1.F / (float)CONVERSIONS_COUNT)
-#define VOLTAGE_CONV_COEF 	(float)(1.F / (float)CONVERSIONS_COUNT)
+#define CURRENT_CONV_COEF 	(float)(0.00734F / (float)CONVERSIONS_COUNT)
+#define VOLTAGE_CONV_COEF 	(float)(0.0154F / (float)CONVERSIONS_COUNT)
 #define BEMF_CONV_COEF 		(float)(1.F / (float)CONVERSIONS_COUNT)
 #define TEMP_CONV_COEF 		(float)(1.F / (float)CONVERSIONS_COUNT)
 
+enum state {
+	Stopped,
+	Starting,
+	Running,
+	Stopping,
+	Fault
+};
 
 #endif /* INC_MAIN_H_ */

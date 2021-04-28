@@ -33,10 +33,13 @@ void SixStepCommutation::Init(const SixStepCommSettings& settings){
 }
 
 void SixStepCommutation::Start(){
+
+	startUpDelay.Tick();
+
 	if(StartUp.fRampOn == false){
 		Align();
 	} else {
-		Ramp();
+		//Ramp();
 	}
 }
 
@@ -89,8 +92,11 @@ void SixStepCommutation::Align(){
 	rpmTimer->Stop();
 	rpmTimer->ResetCNT();
 
-	Flags.trainPI 	= true;
-	stallCount 		= 0;
+	commTimer->Stop();
+	commTimer->ResetCNT();
+
+	stallCount = 0;
+	blankingCount = 0;
 
 	pwmTimer->SetDiraction(Flags.diraction);
 
@@ -105,9 +111,10 @@ void SixStepCommutation::Align(){
 	commSector = 5;
 	pwmTimer->SwitchCommSector(commSector);
 
-	StartUp.Time.current = StartUp.Time.start;
+	StartUp.Time.current = StartUp.Time.start * 10;
 	StartUp.Time.sector = 0;
 	StartUp.state = AlignmentOn;
+	StartUp.fRampOn = true;
 
 	// Non-blocking delay for alingment
 	startUpDelay.Start(StartUp.Time.alignment * pwmTimer->Getpwm100usFactor() * 10);
@@ -116,7 +123,7 @@ void SixStepCommutation::Align(){
 
 }
 
-void SixStepCommutation::Ramp(){;
+void SixStepCommutation::Ramp(){
 
 	if(startUpDelay.GetState() == On) { return; }
 

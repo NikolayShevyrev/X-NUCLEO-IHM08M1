@@ -8,12 +8,10 @@
 #ifndef INC_DFILTER_H_
 #define INC_DFILTER_H_
 
-#include <array>
-
-template<typename T ,std::size_t buff_size>
+template<typename T ,uint32_t buff_size>
 class dFilter {
 private:
-	std::array<T, buff_size> buffer;
+	T buffer[buff_size];
 	uint32_t index;
 	T sum;
 	uint32_t buffer_size;
@@ -21,17 +19,23 @@ public:
 	dFilter()
 		: index(0), sum(0), buffer_size(buff_size)
 	{
-		buffer.fill(0);
+		for(uint32_t i = 0; i < buffer_size; i++){
+			buffer[i] = 0;
+		}
 	}
 
 	void Reset(){
 		index = 0;
 		sum = 0;
-		buffer.fill(0);
+		for(uint32_t i = 0; i < buffer_size; i++){
+			buffer[i] = 0;
+		}
 	}
 
 	void FillBuffer(T value){
-		buffer.fill(value);
+		for(uint32_t i = 0; i < buffer_size; i++){
+			buffer[i] = value;
+		}
 	}
 
 	T Calc(T value){

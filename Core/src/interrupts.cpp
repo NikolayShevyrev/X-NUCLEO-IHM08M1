@@ -13,7 +13,6 @@
 #include "dma.h"
 #include "adc.h"
 #include "dfilter.h"
-#include "motordrive.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -24,16 +23,20 @@
   * @retval None
   */
 void TIM1_UP_TIM16_IRQHandler(void) {
+
 	extern Timer1 timer1;
-	extern MotorDrive drive;
-
-	GPIO_SetPin(LedX);
-
-	drive.Timer1InterruptHandler();
-
-	GPIO_ResetPin(LedX);
+	extern SixStepCommutation motor;
+	extern state currentState;
 
 	timer1.ClearUIF();
+
+	//SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << 2));
+
+	if(currentState == Starting){
+		motor.Start();
+	}
+
+	//SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << (2+16)));
 
 
 
@@ -45,9 +48,10 @@ void TIM1_UP_TIM16_IRQHandler(void) {
   */
 void DMA1_Channel1_IRQHandler(void) {
 	extern DMA1Channel1 dma1ch1;
-	extern MotorDrive drive;
+	extern SixStepCommutation motor;
 
-	drive.DMA1InterruptHandler();
+	motor.SetDCCurrent(dma1ch1.GetDCCurrent());
+	motor.SetDCVoltage(dma1ch1.GetDCVoltage());
 
 	dma1ch1.TransferCompleteInterruptFlagClear();
 }

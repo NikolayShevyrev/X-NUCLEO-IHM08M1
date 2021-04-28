@@ -124,13 +124,13 @@ public:
 
 	void SetDiraction(bool dir){
 		if(dir) {
-			for(int i; i < 6; i++){
+			for(int i = 0; i < 6; i++){
 				PWM_CCER_STATES[i] = PWM_CCER_STATES_CLKW[i];
 				PWM_CCMR1_STATES[i] = PWM_CCMR1_STATES_CLKW[i];
 				PWM_CCMR2_STATES[i]	= PWM_CCMR2_STATES_CLKW[i];
 			}
 		} else {
-			for(int i; i < 6; i++){
+			for(int i = 0; i < 6; i++){
 				PWM_CCER_STATES[i] = PWM_CCER_STATES_CLKW[5-i];
 				PWM_CCMR1_STATES[i] = PWM_CCMR1_STATES_CLKW[5-i];
 				PWM_CCMR2_STATES[i]	= PWM_CCMR2_STATES_CLKW[5-i];

@@ -32,7 +32,7 @@ void Timer1::Init(uint16_t pwmFrequnce){
 	/*
 	 * Timer 1 CR2 Configuration
 	 *
-	 * Master mode selection: Update event l is used as trigger output
+	 * Master mode selection: Update event l is used as trigger output (TRGO)
 	 * Capture/compare preloaded control: CCxE, CCxNE and OCxM bits are preloaded
 	*/
 	SET_BIT(TIM1->CR2, TIM_CR2_MMS_1 | TIM_CR2_CCPC);
@@ -59,6 +59,8 @@ void Timer1::Init(uint16_t pwmFrequnce){
 	SET_BIT(TIM1->CCER, TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E |
 						TIM_CCER_CC1NE | TIM_CCER_CC2NE | TIM_CCER_CC3NE);
 
+	SET_BIT(TIM1->CCER, TIM_CCER_CC1NP | TIM_CCER_CC2NP | TIM_CCER_CC3NP);
+
 	/*
 	 * Capture/Compare Mode Configuration
 	 *
@@ -82,7 +84,7 @@ void Timer1::Init(uint16_t pwmFrequnce){
 	 * Dead time = 2.5 us
 	 */
 	SET_BIT(TIM1->BDTR, TIM_BDTR_OSSI | TIM_BDTR_OSSR);
-	//SET_BIT(TIM1->BDTR, 0x00D5);
+	SET_BIT(TIM1->BDTR, 0x0024); // 500 ns
 
 	/* Generate Capture/Compare control update event */
 	SET_BIT(TIM1->EGR, TIM_EGR_COMG);
