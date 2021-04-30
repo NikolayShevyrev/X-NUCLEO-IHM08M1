@@ -102,7 +102,7 @@ void Timer1::PinsInit(){
 	/*
 	 * PWM Pins
 	 * PA8 	-> UH
-	 * PB15 -> UL
+	 * PA7	-> UL
 	 * PA9	-> VH
 	 * PB0  -> VL
 	 * PA10 -> WH
@@ -111,7 +111,7 @@ void Timer1::PinsInit(){
 	GPIO_AFPinInit(UH, PushPull, VeryHigh, NoPull, AF6);
 	GPIO_AFPinInit(VH, PushPull, VeryHigh, NoPull, AF6);
 	GPIO_AFPinInit(WH, PushPull, VeryHigh, NoPull, AF6);
-	GPIO_AFPinInit(UL, PushPull, VeryHigh, NoPull, AF4);
+	GPIO_AFPinInit(UL, PushPull, VeryHigh, NoPull, AF6);
 	GPIO_AFPinInit(VL, PushPull, VeryHigh, NoPull, AF6);
 	GPIO_AFPinInit(WL, PushPull, VeryHigh, NoPull, AF6);
 }

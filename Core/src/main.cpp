@@ -38,14 +38,14 @@ int main(){
 	/* Settings */
 	FillSixStepCommSettings(motorSettings);
 
-	/* Init Motor */
-	motor.Init(motorSettings);
-
 	/* Initialize all configured peripherals */
 	GPIO_Init();
 	timer1.Init(motorSettings.fpwm);
 	adc1.Init();
 	dma1ch1.Init();
+
+	/* Init Motor */
+	motor.Init(motorSettings);
 
 	timer1.Start();
 	timer1.PWMOutputsOn();

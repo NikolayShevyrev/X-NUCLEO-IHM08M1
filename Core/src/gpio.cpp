@@ -21,7 +21,7 @@ const gpio_t Button(GPIOC, 13);
 const gpio_t UH(GPIOA, 8);
 const gpio_t VH(GPIOA, 9);
 const gpio_t WH(GPIOA, 10);
-const gpio_t UL(GPIOB, 15);
+const gpio_t UL(GPIOA, 7);
 const gpio_t VL(GPIOB, 0);
 const gpio_t WL(GPIOB, 1);
 

@@ -54,10 +54,10 @@ private:
 	/*
 	 * Capture/Compare output enable depending on the commutation sector
 	 * 0x1 -> OCx is output, OCxN is not active
-	 * 0x4 -> OCx is not active, OCxN is output
-	 * 0x5 -> OCx is output, OCxN is output
+	 * 0xC -> OCx is not active, OCxN is output with polarity
+	 * 0xD -> OCx is output, OCxN is output with polarity
 	 */
-	const uint16_t PWM_CCER_STATES_CLKW[6] = {0x0145,0x0415,0x0451,0x0154,0x0514,0x0541};
+	const uint16_t PWM_CCER_STATES_CLKW[6] = {0x0CCD,0x0CCD,0x0CDC,0x0CDC,0x0DCC,0x0DCC};
 	uint16_t PWM_CCER_STATES[6];
 
 	/*
