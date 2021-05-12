@@ -18,6 +18,8 @@ void SystemClock_Config(void);
 #define FPWM (uint16_t)20000
 #define CONVERSIONS_COUNT 2
 
+#define BEMF_MEAS_PERIOD 300
+
 #define CURRENT_CONV_COEF 	(float)(0.00734F / (float)CONVERSIONS_COUNT)
 #define VOLTAGE_CONV_COEF 	(float)(0.0154F / (float)CONVERSIONS_COUNT)
 #define BEMF_CONV_COEF 		(float)(1.F / (float)CONVERSIONS_COUNT)

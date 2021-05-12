@@ -24,7 +24,7 @@ void ADC_1::Init(){
 	DelayedConversionMode();
 
 	ExternalTriggerEnableRegularChannels(RisingEdge);
-	ExternalTriggerSelectionRegularChannels(9); // Tim1_TRGO event
+	ExternalTriggerSelectionRegularChannels(10); 		// Tim1_TRGO2 event
 
 	RegularSequenceLength(CONVERSIONS_COUNT*3);
 	ConvertionInRegularSequence(1, 8);
@@ -66,12 +66,18 @@ void ADC_2::Init(){
 	DMAConfiguration(Circular);
 	DelayedConversionMode();
 
+	ExternalTriggerEnableRegularChannels(RisingEdge);
+	ExternalTriggerSelectionRegularChannels(4); // TIM3_TRGO event
+
+
 	RegularSequenceLength(3);
 	ConvertionInRegularSequence(1, 9);
 	ConvertionInRegularSequence(2, 5);
 	ConvertionInRegularSequence(3, 11);
 
 	Enable();
+	StartRegularConv();
+
 }
 
 void ADC_2::PinsInit(){

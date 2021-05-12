@@ -8,6 +8,10 @@
 #include "timers.h"
 #include "gpio.h"
 
+/**
+  * @brief  Timer 1 Init: PWM timer
+  * @retval None
+  */
 void Timer1::Init(uint16_t pwmFrequnce){
 
 	pwmFrequnce_ = pwmFrequnce;
@@ -32,14 +36,19 @@ void Timer1::Init(uint16_t pwmFrequnce){
 	/*
 	 * Timer 1 CR2 Configuration
 	 *
-	 * Master mode selection: Update event l is used as trigger output (TRGO)
+	 * Master mode selection: Update event is used as trigger output (TRGO2)
+	 * Master mode selection: OCxREF is used as trigger output (TRGO)
 	 * Capture/compare preloaded control: CCxE, CCxNE and OCxM bits are preloaded
 	*/
-	SET_BIT(TIM1->CR2, TIM_CR2_MMS_1 | TIM_CR2_CCPC);
+	SET_BIT(TIM1->CR2, TIM_CR2_MMS2_1);
+	SET_BIT(TIM1->CR2, TIM_CR2_MMS_2);
+
+	SET_BIT(TIM1->CR2, TIM_CR2_CCPC);
 
 	SET_BIT(TIM1->CCMR1, TIM_CCMR1_OC1PE |
 						 TIM_CCMR1_OC2PE );
 	SET_BIT(TIM1->CCMR2, TIM_CCMR2_OC3PE );
+
 
 	/*
 	 * Set ARR, PSC and RCR values
@@ -74,7 +83,7 @@ void Timer1::Init(uint16_t pwmFrequnce){
 	/*
 	 * Set defaulte Capture/Compare values: 50% duty sycle
 	 */
-	WRITE_REG(TIM1->CCR1, period_/2);
+	WRITE_REG(TIM1->CCR1, period_/4);
 	WRITE_REG(TIM1->CCR2, period_/2);
 	WRITE_REG(TIM1->CCR3, period_/2);
 
@@ -84,7 +93,7 @@ void Timer1::Init(uint16_t pwmFrequnce){
 	 * Dead time = 2.5 us
 	 */
 	SET_BIT(TIM1->BDTR, TIM_BDTR_OSSI | TIM_BDTR_OSSR);
-	SET_BIT(TIM1->BDTR, 0x0024); // 500 ns
+	//SET_BIT(TIM1->BDTR, 0x0024); // 500 ns
 
 	/* Generate Capture/Compare control update event */
 	SET_BIT(TIM1->EGR, TIM_EGR_COMG);
@@ -116,6 +125,10 @@ void Timer1::PinsInit(){
 	GPIO_AFPinInit(WL, PushPull, VeryHigh, NoPull, AF6);
 }
 
+/**
+  * @brief  Timer 2 Init: RPM measurement timer
+  * @retval None
+  */
 void Timer2::Init(){
 	/*
 	 * Timer 2 Clock Enable
@@ -201,26 +214,14 @@ void Timer2::PinsInit(){
 	GPIO_AFPinInit(HALL3, PushPull, VeryHigh, NoPull, AF1);
 }
 
-void Timer7::Init(){
-	/*
-	 * Timer 7 Clock Enable
-	 * f = 108 MHz
-	 */
-	SET_BIT(RCC->APB1ENR, RCC_APB1ENR_TIM7EN);
-
-	/*
-	 * Setting CNT, ARR and PSC values
-	 */
-	WRITE_REG(TIM7->CNT, 0x0000);		// Resetting timer
-	WRITE_REG(TIM7->PSC, 107);			// T = 1 us
-	WRITE_REG(TIM7->ARR, 0xFFFF);
-
-}
-
+/**
+  * @brief  Timer 6 Init: Commutation timer
+  * @retval None
+  */
 void Timer6::Init(){
 	/*
 	 * Timer 6 Clock Enable
-	 * f = 108 MHz
+	 * f = 72 MHz
 	 */
 	SET_BIT(RCC->APB1ENR, RCC_APB1ENR_TIM6EN);
 
@@ -228,7 +229,7 @@ void Timer6::Init(){
 	 * Setting CNT, ARR and PSC values
 	 */
 	WRITE_REG(TIM6->CNT, 0x0000);		// Resetting timer
-	WRITE_REG(TIM6->PSC, 107);			// T = 1 us
+	WRITE_REG(TIM6->PSC, 71);			// T = 1 us
 	WRITE_REG(TIM6->ARR, 0x0000);
 
 	/*
@@ -237,5 +238,39 @@ void Timer6::Init(){
 	SET_BIT(TIM6->DIER, TIM_DIER_UIE);
 	NVIC_SetPriority(TIM6_DAC_IRQn, 0);
 	NVIC_EnableIRQ(TIM6_DAC_IRQn);
+
+}
+
+/**
+  * @brief  Timer 3 Init: BEMF convertion timer
+  * @retval None
+  */
+void Timer3::Init(){
+	/*
+	 * Timer 3 Clock Enable
+	 * f = 72 MHz
+	 */
+	SET_BIT(RCC->APB1ENR, RCC_APB1ENR_TIM3EN);
+
+	/*
+	 * Setting CNT, ARR and PSC values
+	 */
+	WRITE_REG(TIM3->CNT, 0x0000);
+	WRITE_REG(TIM3->PSC, 0);
+	WRITE_REG(TIM3->ARR, BEMF_MEAS_PERIOD);
+
+	/*
+	 * Slave mode selection: Gated mode
+	 * Trigger selection: Internal trigger 0 (ITRG0 = TIM1)
+	 */
+	SET_BIT(TIM3->SMCR, TIM_SMCR_SMS_0 | TIM_SMCR_SMS_2);
+	CLEAR_BIT(TIM3->SMCR, TIM_SMCR_TS);
+
+	/*
+	 * Master mode selection: Update event is trigger output
+	 */
+	SET_BIT(TIM3->CR2, TIM_CR2_MMS_1);
+
+	this->Start();
 
 }

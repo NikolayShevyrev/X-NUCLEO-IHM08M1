@@ -20,9 +20,12 @@ void CheckButton(void);
 Timer1 timer1;
 Timer2 timer2;
 Timer6 timer6;
+Timer3 timer3;
 
 ADC_1 adc1;
+ADC_2 adc2;
 DMA1Channel1 dma1ch1;
+DMA2Channel1 dma2ch1;
 
 SixStepCommSettings motorSettings;
 
@@ -41,8 +44,11 @@ int main(){
 	/* Initialize all configured peripherals */
 	GPIO_Init();
 	timer1.Init(motorSettings.fpwm);
+	timer3.Init();
 	adc1.Init();
+	adc2.Init();
 	dma1ch1.Init();
+	dma2ch1.Init();
 
 	/* Init Motor */
 	motor.Init(motorSettings);

@@ -199,9 +199,9 @@ public:
 	virtual void Init();
 };
 
-class Timer7 : public Timer {
+class Timer3 : public Timer {
 public:
-	Timer7() : Timer(TIM7) {
+	Timer3() : Timer(TIM3) {
 		}
 
 	virtual void Init();
