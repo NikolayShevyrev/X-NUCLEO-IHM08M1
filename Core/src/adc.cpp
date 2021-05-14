@@ -89,4 +89,12 @@ void ADC_2::PinsInit(){
 	GPIO_AnalogPinInit(BEMF1);
 	GPIO_AnalogPinInit(BEMF2);
 	GPIO_AnalogPinInit(BEMF3);
+
+	/*
+	 * PC9 -> GPIO BEMF
+	 */
+	GPIO_OutputPinInit(GPIO_BEMF, PushPull, High, NoPull);
+
+	// Pull gpio_bemf to gnd
+	GPIO_ResetPin(GPIO_BEMF);
 }

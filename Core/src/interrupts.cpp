@@ -29,12 +29,19 @@ void TIM1_UP_TIM16_IRQHandler(void) {
 	extern SixStepCommutation motor;
 	extern state currentState;
 
-	timer1.ClearUIF();
+	SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << 2));
+	//timer1.ClearUIF();
+	CLEAR_BIT(TIM1->SR, TIM_SR_UIF);
 
-	timer3.ResetCNT();
+	SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << (2+16)));
+
+	//timer3.ResetCNT();
+	CLEAR_REG(TIM3->CNT);
 
 	if(currentState == Starting){
+		//SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << 2));
 		motor.Start();
+		//SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << (2+16)));
 	}
 
 }
@@ -47,10 +54,11 @@ void DMA1_Channel1_IRQHandler(void) {
 	extern DMA1Channel1 dma1ch1;
 	extern SixStepCommutation motor;
 
-	motor.SetDCCurrent(dma1ch1.GetDCCurrent());
-	motor.SetDCVoltage(dma1ch1.GetDCVoltage());
+	motor.SetDCCurrent();
+	motor.SetDCVoltage();
 
-	dma1ch1.TransferCompleteInterruptFlagClear();
+	//dma1ch1.TransferCompleteInterruptFlagClear();
+	SET_BIT(DMA1->IFCR, DMA_IFCR_CTCIF1);
 }
 
 /**
@@ -61,11 +69,12 @@ void DMA2_Channel1_IRQHandler(void) {
 	extern DMA2Channel1 dma2ch1;
 	extern SixStepCommutation motor;
 
-	SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << 2));
+	//SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << 2));
 
-	dma2ch1.TransferCompleteInterruptFlagClear();
+	//dma2ch1.TransferCompleteInterruptFlagClear();
+	SET_BIT(DMA2->IFCR, DMA_IFCR_CTCIF1);
 
-	SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << (2+16)));
+	//SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << (2+16)));
 
 }
 

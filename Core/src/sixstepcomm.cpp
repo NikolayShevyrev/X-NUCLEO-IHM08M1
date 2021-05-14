@@ -39,7 +39,7 @@ void SixStepCommutation::Start(){
 	if(StartUp.fRampOn == false){
 		Align();
 	} else {
-		//Ramp();
+		Ramp();
 	}
 }
 

@@ -18,11 +18,11 @@ void FillMainSettings(MainSettings& settings){
 void FillSixStepCommSettings(SixStepCommSettings& settings){
 	settings.fpwm 			= 20000;
 	settings.pole_pairs 	= 4;
-	settings.startup_duty 	= 0.3;
-	settings.startup_rpm 	= 500;
+	settings.startup_duty 	= 0.2;
+	settings.startup_rpm 	= 1000;
 	settings.max_rpm 		= 3000;
-	settings.desired_rpm 	= 1000;
+	settings.desired_rpm 	= 1500;
 	settings.rotor_align_t	= 100;
-	settings.startup_ramp_t = 200;
+	settings.startup_ramp_t = 1000;
 	settings.startup_sust_t = 50;
 }

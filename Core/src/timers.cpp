@@ -83,7 +83,7 @@ void Timer1::Init(uint16_t pwmFrequnce){
 	/*
 	 * Set defaulte Capture/Compare values: 50% duty sycle
 	 */
-	WRITE_REG(TIM1->CCR1, period_/4);
+	WRITE_REG(TIM1->CCR1, period_/2);
 	WRITE_REG(TIM1->CCR2, period_/2);
 	WRITE_REG(TIM1->CCR3, period_/2);
 

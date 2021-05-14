@@ -55,6 +55,9 @@ struct BEMF_Filter {
 };
 
 class SixStepCommutation {
+public:
+	uint32_t adc_data_bemf[3];
+	uint32_t adc_data[CONVERSIONS_COUNT*3];
 private:
 	Timer1 * pwmTimer;
 	Timer2 * rpmTimer;
@@ -76,6 +79,9 @@ private:
 	} Flags;
 
 	struct {
+		float bemf1;
+		float bemf2;
+		float bemf3;
 		float dcCurrent;
 		float dcVoltage;
 		float temperature;
@@ -121,12 +127,34 @@ public:
 		Flags.diraction = dir;
 	}
 
-	void SetDCCurrent(float current){
-		Feedback.dcCurrent = current;
+	void SetBemf1(float bemf){
+		Feedback.bemf1 = bemf;
 	}
 
-	void SetDCVoltage(float voltage){
-		Feedback.dcVoltage = voltage;
+	void SetBemf2(float bemf){
+		Feedback.bemf2 = bemf;
+	}
+
+	void SetBemf3(float bemf){
+		Feedback.bemf3 = bemf;
+	}
+
+	void SetDCCurrent(){
+		float current = 0;
+		for(int i = 2 ; i < (CONVERSIONS_COUNT*3); i+=3){
+			current += adc_data[i];
+		}
+		Feedback.dcCurrent = (current * CURRENT_CONV_COEF);
+	}
+
+	void SetDCVoltage(){
+		static dFilter<float, 16> voltageFilter;
+		float voltage = 0;
+		for(int i = 1 ; i < (CONVERSIONS_COUNT*3); i+=3){
+			voltage += adc_data[i];
+		}
+		voltage = voltage * VOLTAGE_CONV_COEF;
+		Feedback.dcVoltage = voltageFilter.Calc(voltage);
 	}
 
 	void SetTemperature(float temp){
