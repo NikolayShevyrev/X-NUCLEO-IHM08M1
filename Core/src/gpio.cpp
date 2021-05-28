@@ -13,6 +13,7 @@
 
 // LEDs
 const gpio_t LedX(GPIOB, 2);
+const gpio_t DebugPin_1(GPIOC, 8);
 
 // Buttons
 const gpio_t Button(GPIOC, 13);
@@ -67,6 +68,7 @@ void GPIO_Init(void){
 	 * PB2 = LEDX Red
 	 */
 	GPIO_OutputPinInit(LedX, PushPull, High, NoPull);
+	GPIO_OutputPinInit(DebugPin_1, PushPull, High, NoPull);
 
 	/*
 	 * User Button = PC13

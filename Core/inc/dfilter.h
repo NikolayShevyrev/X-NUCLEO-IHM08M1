@@ -36,6 +36,7 @@ public:
 		for(uint32_t i = 0; i < buffer_size; i++){
 			buffer[i] = value;
 		}
+		sum = value * buffer_size;
 	}
 
 	T Calc(T value){

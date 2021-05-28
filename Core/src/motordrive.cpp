@@ -22,13 +22,6 @@ void StoppedState::Timer1InterruptHandler() {
 
 void StoppedState::DMA1InterruptHandler() {
 
-	extern DMA1Channel1 dma1ch1;
-	extern SixStepCommutation motor;
-
-	//motor.SetDCCurrent(dma1ch1.GetDCCurrent());
-	//motor.SetDCVoltage(dma1ch1.GetDCVoltage());
-	//motor.SetTemperature(dma1ch1.GetTemp());
-
 }
 
 void StoppedState::DMA2InterruptHandler() {

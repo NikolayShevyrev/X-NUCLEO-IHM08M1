@@ -76,7 +76,7 @@ void ADC_2::Init(){
 	ConvertionInRegularSequence(3, 11);
 
 	Enable();
-	StartRegularConv();
+	//StartRegularConv();
 
 }
 
@@ -85,10 +85,15 @@ void ADC_2::PinsInit(){
 	 * PC3 -> BEMF1 Channel 9
 	 * PC4 -> BEMF2 Channel 5
 	 * PC5 -> BEMF3 Channel 11
+	 * PA5 -> Channel 2
+	 * PA4 -> Channel 1
 	 */
 	GPIO_AnalogPinInit(BEMF1);
 	GPIO_AnalogPinInit(BEMF2);
 	GPIO_AnalogPinInit(BEMF3);
+	//GPIO_AnalogPinInit(DAC_1);
+	//GPIO_AnalogPinInit(DAC_2);
+
 
 	/*
 	 * PC9 -> GPIO BEMF
@@ -97,4 +102,5 @@ void ADC_2::PinsInit(){
 
 	// Pull gpio_bemf to gnd
 	GPIO_ResetPin(GPIO_BEMF);
+	//GPIO_SetPin(GPIO_BEMF);
 }

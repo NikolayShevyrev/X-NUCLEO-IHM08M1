@@ -61,7 +61,7 @@ void DMA2Channel1::Init(){
 	PriorityLevel(VeryHighPr);
 	TransferCompleteInterruptEnable();
 
-	SetPriorityIRQ(0);
+	SetPriorityIRQ(1);
 	EnableIRQ();
 
 	ChannelEnable();

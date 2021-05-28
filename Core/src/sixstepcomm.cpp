@@ -6,6 +6,7 @@
  */
 
 #include "sixstepcomm.h"
+#include "adc.h"
 
 void SixStepCommutation::Init(const SixStepCommSettings& settings){
 	StartUp.duty 			= (uint16_t)((float)pwmTimer->GetPWMPeriod() * settings.startup_duty);
@@ -21,35 +22,75 @@ void SixStepCommutation::Init(const SixStepCommSettings& settings){
 	maxRPM 		= settings.max_rpm;
 	desiredRPM	= settings.desired_rpm;
 
-	timer_to_rpm = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)rpmTimer->GetPSC_32()));
-	timer_min 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)rpmTimer->GetPSC_32() * (float)maxRPM));
-	timer_max 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)rpmTimer->GetPSC_32() * (float)StartUp.rpm));
+	timer_to_rpm = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)71.f));
+	timer_min 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)71.f * (float)maxRPM));
+	timer_max 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)71.f * (float)StartUp.rpm));
 
-	maxDuty = (uint16_t)((float)pwmTimer->GetPWMPeriod() * (float)0.1);
-	minDuty = pwmTimer->GetPWMPeriod();
+	minDuty = (uint16_t)((float)pwmTimer->GetPWMPeriod() * (float)0.1);
+	maxDuty = pwmTimer->GetPWMPeriod();
 
 	stallLimit 		= 14000;
 	blankingLimit 	= 4;
 }
 
-void SixStepCommutation::Start(){
+void SixStepCommutation::Run(state& currentState){
 
-	startUpDelay.Tick();
-
-	if(StartUp.fRampOn == false){
-		Align();
-	} else {
-		Ramp();
+	switch(currentState){
+		case Stopped:
+			break;
+		case Starting:
+			startUpDelay.Tick();
+			if(StartUp.fRampOn == false){
+				Align();
+			} else {
+				Ramp();
+			}
+			break;
+		case Running:
+			/*if(Flags.preCommutation == false){
+				blankingCount++;
+			}*/
+			if(stallCount > stallLimit){
+				currentState = Fault;
+			}
+			break;
+		case Stopping:
+			this->Stop();
+			break;
+		case Fault:
+			this->Stop();
+			break;
+		default:
+			break;
 	}
 }
 
-void SixStepCommutation::Run(){
+void SixStepCommutation::BemfDetection(state& currentState){
 
 	if(Flags.preCommutation == true) { return; }
 
 	if((++blankingCount) < blankingLimit) { return; }
 
+	comparatorOutputs = 0;
+
+	Feedback.bemf = (float)adc_data_bemf[bemfDetection.current[commSector]] * BEMF_CONV_COEF;
+	if(Feedback.bemf > Feedback.dcVoltage/2){
+		comparatorOutputs += bemfDetection.comp[commSector];
+	}
+
+	//WRITE_REG(DAC->DHR12R2, (uint16_t)(Feedback.bemf*100));
+	WRITE_REG(DAC->DHR12R2, adc_data_bemf[bemfDetection.current[commSector]]);
+	WRITE_REG(DAC->DHR12R1, (uint16_t)(Feedback.dcVoltage*100));
+
 	if(BEMFDetection() == true){
+
+		LEDX_ON();
+
+		bemfDetection.flag = true;
+
+		if(bemfDetection.count > 2 && currentState == Starting){
+			currentState = Running;
+		}
 
 		stallCount = 0;
 		Flags.bemfDetection = true;
@@ -59,28 +100,74 @@ void SixStepCommutation::Run(){
 		timer_avg = rpmFilter.Calc(rpmTimer->GetCNT());
 		rpmTimer->ResetCNT();
 		rpmTimer->Start();
+		if(timer_avg == 0) { timer_avg = 1; }
 		currentRPM = timer_to_rpm/timer_avg;
 
-		commutationTime = timer_avg << 1;
+
+		commutationTime = timer_avg >> 1;
 		if(commutationTime < 1){
 			commutationTime = 1;
 		}
 		commTimer->SetARR(commutationTime);
-		commTimer->Start();
 
-		SpeedLoopController();
+		//commTimer->Start();
+
+		if(currentState == Running){
+			DEBUGPIN_1_ON();
+			commTimer->Start();
+			SpeedLoopController();
+		}
+
 
 	} else {
+
+		LEDX_OFF()
+
 		stallCount++;
 	}
 }
 
+void SixStepCommutation::Commutation(){
+	bemfFilter.value = 0;
+	blankingCount = 0;
+
+	//Change commutation sector
+	if((++commSector) > 5) { commSector = 0; }
+
+	pwmTimer->SwitchCommSector(commSector);
+
+	Flags.preCommutation = false;
+
+	commTimer->ClearUIF();
+	commTimer->Stop();
+	commTimer->ResetCNT();
+
+
+}
+
 void SixStepCommutation::Stop(){
+
+	extern ADC_2 adc2;
 
 	pwmTimer->PWMOutputsOff();
 	startUpDelay.Stop();
+
 	rpmTimer->Stop();
+	commTimer->Stop();
+
+	rpmTimer->ResetCNT();
+	commTimer->ResetCNT();
+
 	rpmFilter.Reset();
+
+	adc2.StopRegularConv();
+
+
+	Flags.preCommutation = false;
+	bemfFilter.value = 0;
+	blankingCount = 0;
+	stallCount = 0;
+
 }
 
 void SixStepCommutation::Align(){
@@ -130,15 +217,37 @@ void SixStepCommutation::Ramp(){
 	//Change commutation sector
 	if((++commSector) > 5) { commSector = 0; }
 
+	if (StartUp.state != StartUpOver){
+		CalcSector();
+	} else {
+		Flags.preCommutation = false;
+		blankingCount = 0;
+		bemfFilter.value = 0;
+		if(bemfDetection.flag == true){
+			bemfDetection.count++;
+			bemfDetection.flag = false;
+		} else {
+			bemfDetection.count = 0;
+			bemfDetection.error++;
+		}
+		if (bemfDetection.error > bemfDetection.limit){
+			bemfDetection.error = 0;
+			StartUp.Time.sector = (uint32_t)((float)StartUp.Time.sector * (float)ADVENCE_ANGLE_COEFF);
+			if(StartUp.Time.sector < MIN_SECTOR_TIME) { StartUp.Time.sector = MIN_SECTOR_TIME; }
+		}
+
+	}
+
 	pwmTimer->SwitchCommSector(commSector);
 
-	CalcSector();
 
 	startUpDelay.Start(StartUp.Time.sector * pwmTimer->Getpwm100usFactor());
 }
 
 
 void SixStepCommutation::CalcSector(){
+
+	extern ADC_2 adc2;
 
 	if(StartUp.Time.current < (uint32_t)(StartUp.Time.ramp*10)){
 
@@ -147,13 +256,19 @@ void SixStepCommutation::CalcSector(){
 		StartUp.state = RampOn;
 
 	} else if(StartUp.Time.current < (uint32_t)(StartUp.Time.ramp*10 + StartUp.Time.sust*10)){
+
 		StartUp.state = SustOn;
+
 	} else {
+
 		StartUp.state = StartUpOver;
+		adc2.StartRegularConv();
+		Flags.preCommutation = false;
+
 	}
 
 	StartUp.Time.current += StartUp.Time.sector;
-	if(StartUp.Time.current > (uint32_t)4000000000) StartUp.Time.current = (uint32_t)4000000000;
+	if(StartUp.Time.current > TIME_LIMIT) StartUp.Time.current = TIME_LIMIT;
 }
 
 bool SixStepCommutation::BEMFDetection(){
@@ -166,12 +281,10 @@ bool SixStepCommutation::BEMFDetection(){
 
 void SixStepCommutation::SpeedLoopController(){
 
-	if(Flags.trainPI == true) { return; }
-
 	if(currentRPM < desiredRPM){
-		if(currentDuty > minDuty) currentDuty--;
-	} else if(currentRPM > desiredRPM){
 		if(currentDuty < maxDuty) currentDuty++;
+	} else if(currentRPM > desiredRPM){
+		if(currentDuty > minDuty) currentDuty--;
 	}
 
 	pwmTimer->SetDuty(currentDuty);

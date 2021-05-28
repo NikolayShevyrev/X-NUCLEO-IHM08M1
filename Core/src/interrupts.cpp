@@ -29,22 +29,30 @@ void TIM1_UP_TIM16_IRQHandler(void) {
 	extern SixStepCommutation motor;
 	extern state currentState;
 
-	SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << 2));
-	//timer1.ClearUIF();
-	CLEAR_BIT(TIM1->SR, TIM_SR_UIF);
+	timer1.ClearUIF();
 
-	SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << (2+16)));
+	timer3.ResetCNT();
 
-	//timer3.ResetCNT();
-	CLEAR_REG(TIM3->CNT);
-
-	if(currentState == Starting){
-		//SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << 2));
-		motor.Start();
-		//SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << (2+16)));
-	}
-
+	motor.Run(currentState);
 }
+
+/**
+  * @brief  Timer6  Commutation Interrupt Service Routine
+  * @retval None
+  */
+void TIM6_DAC_IRQHandler(void) {
+
+	extern SixStepCommutation motor;
+	extern state currentState;
+
+	DEBUGPIN_1_OFF();
+
+	motor.Commutation();
+
+
+	//motor.Run(currentState);
+}
+
 
 /**
   * @brief  DMA1 Channel 1 Interrupt Service Routine
@@ -57,8 +65,8 @@ void DMA1_Channel1_IRQHandler(void) {
 	motor.SetDCCurrent();
 	motor.SetDCVoltage();
 
-	//dma1ch1.TransferCompleteInterruptFlagClear();
-	SET_BIT(DMA1->IFCR, DMA_IFCR_CTCIF1);
+	dma1ch1.TransferCompleteInterruptFlagClear();
+
 }
 
 /**
@@ -68,13 +76,14 @@ void DMA1_Channel1_IRQHandler(void) {
 void DMA2_Channel1_IRQHandler(void) {
 	extern DMA2Channel1 dma2ch1;
 	extern SixStepCommutation motor;
+	extern state currentState;
 
-	//SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << 2));
+	//WRITE_REG(DAC->DHR12R2, (motor.adc_data_bemf[2]));
 
-	//dma2ch1.TransferCompleteInterruptFlagClear();
-	SET_BIT(DMA2->IFCR, DMA_IFCR_CTCIF1);
+	motor.BemfDetection(currentState);
 
-	//SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << (2+16)));
+	dma2ch1.TransferCompleteInterruptFlagClear();
+
 
 }
 

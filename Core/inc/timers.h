@@ -18,6 +18,10 @@ public:
 		  timer_(timer){
 	}
 
+	virtual ~Timer(){
+
+	}
+
 	virtual void Init(){
 
 	}
@@ -70,6 +74,14 @@ private:
 	const uint16_t PWM_CCMR2_STATES_CLKW[6] = {0x0048,0x0058,0x0058,0x0048,0x0078,0x0078};
 	uint16_t PWM_CCMR1_STATES[6];
 	uint16_t PWM_CCMR2_STATES[6];
+	/*
+	 * Master mode selection: ADC Trigger
+	 * 0x00000060 = OC3REF signal is used as trigger output (TRGO)
+	 * 0x00000050 = OC2REF signal is used as trigger output (TRGO)
+	 * 0x00000040 = OC1REF signal is used as trigger output (TRGO)
+	 */
+	const uint32_t MMS_STATES_CLWS[6] = {0x00000040, 0x00000040, 0x00000050, 0x00000050, 0x00000060, 0x00000060};
+	uint32_t MMS_STATES[6];
 
 public:
 	Timer1() : Timer(TIM1) {
@@ -128,12 +140,14 @@ public:
 				PWM_CCER_STATES[i] = PWM_CCER_STATES_CLKW[i];
 				PWM_CCMR1_STATES[i] = PWM_CCMR1_STATES_CLKW[i];
 				PWM_CCMR2_STATES[i]	= PWM_CCMR2_STATES_CLKW[i];
+				MMS_STATES[i] = MMS_STATES_CLWS[i];
 			}
 		} else {
 			for(int i = 0; i < 6; i++){
 				PWM_CCER_STATES[i] = PWM_CCER_STATES_CLKW[5-i];
 				PWM_CCMR1_STATES[i] = PWM_CCMR1_STATES_CLKW[5-i];
 				PWM_CCMR2_STATES[i]	= PWM_CCMR2_STATES_CLKW[5-i];
+				MMS_STATES[i] = MMS_STATES_CLWS[5-i];
 			}
 		}
 	}
@@ -142,6 +156,8 @@ public:
 		WRITE_REG(TIM1->CCER, PWM_CCER_STATES[sector]);
 		WRITE_REG(TIM1->CCMR1, PWM_CCMR1_STATES[sector]);
 		WRITE_REG(TIM1->CCMR2, PWM_CCMR2_STATES[sector]);
+		CLEAR_BIT(TIM1->CR2, TIM_CR2_MMS);
+		SET_BIT(TIM1->CR2, MMS_STATES[sector]);
 
 		/* Generate Capture/Compare control update event */
 		SET_BIT(TIM1->EGR, TIM_EGR_COMG);
@@ -154,6 +170,7 @@ class Timer2 : public Timer {
 public:
 	Timer2() : Timer(TIM2) {
 	}
+
 
 	virtual void Init();
 
@@ -196,6 +213,16 @@ public:
 	Timer6() : Timer(TIM6) {
 	}
 
+
+	virtual void Init();
+};
+
+class Timer4 : public Timer {
+public:
+	Timer4() : Timer(TIM4) {
+	}
+
+
 	virtual void Init();
 };
 
@@ -203,6 +230,7 @@ class Timer3 : public Timer {
 public:
 	Timer3() : Timer(TIM3) {
 		}
+
 
 	virtual void Init();
 };

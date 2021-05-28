@@ -139,9 +139,9 @@ void Timer2::Init(){
 	/*
 	 * Setting CNT, ARR and PSC values
 	 */
-	WRITE_REG(TIM7->CNT, 0x00000000);	// Resetting timer
-	WRITE_REG(TIM7->PSC, 71);			// T = 1 us
-	WRITE_REG(TIM7->ARR, 0xFFFFFFFF);
+	WRITE_REG(TIM2->CNT, 0x00000000);	// Resetting timer
+	WRITE_REG(TIM2->PSC, 71);			// T = 1 us
+	WRITE_REG(TIM2->ARR, 0xFFFFFFFF);
 }
 
 void Timer2::InitHall(){
@@ -239,6 +239,25 @@ void Timer6::Init(){
 	NVIC_SetPriority(TIM6_DAC_IRQn, 0);
 	NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
+}
+
+/**
+  * @brief  Timer 4 Init: RPM measurement timer
+  * @retval None
+  */
+void Timer4::Init(){
+	/*
+	 * Timer 4 Clock Enable
+	 * f = 72 MHz
+	 */
+	SET_BIT(RCC->APB1ENR, RCC_APB1ENR_TIM4EN);
+
+	/*
+	 * Setting CNT, ARR and PSC values
+	 */
+	WRITE_REG(TIM4->CNT, 0x0000);	// Resetting timer
+	WRITE_REG(TIM4->PSC, 71);			// T = 1 us
+	WRITE_REG(TIM4->ARR, 0xFFFF);
 }
 
 /**

@@ -14,11 +14,16 @@
 #include "settings.h"
 #include "dfilter.h"
 
+#define TIME_LIMIT (uint32_t)4000000000
+#define MIN_SECTOR_TIME (uint32_t)8
+#define ADVENCE_ANGLE_COEFF (float)0.9F
+
 enum Diraction {
 	Clockwise = true,
 	Anticlockwise = false
 };
 enum StartUpState {
+	StartUpOff,
 	AlignmentOn,
 	RampOn,
 	SustOn,
@@ -54,20 +59,32 @@ struct BEMF_Filter {
 	uint16_t value;
 };
 
+struct BEMF_Detection {
+	bool flag = false;
+	uint32_t count;
+	uint32_t error;
+	const uint32_t limit = 10;
+	const uint16_t current[6] = {2, 1, 0, 2, 1, 0};
+	const uint16_t comp[6] = {4, 2, 1, 4, 2, 1};
+};
+
 class SixStepCommutation {
 public:
 	uint32_t adc_data_bemf[3];
 	uint32_t adc_data[CONVERSIONS_COUNT*3];
 private:
 	Timer1 * pwmTimer;
-	Timer2 * rpmTimer;
+	Timer4 * rpmTimer;
 	Timer6 * commTimer;
 
+	uint32_t tmp;
+
 	NonBlockingDelay startUpDelay;
-	dFilter<uint16_t, 4> rpmFilter;
+	dFilter<uint32_t, 4> rpmFilter;
 
 	MotorStartUp StartUp;
 	BEMF_Filter bemfFilter;
+	BEMF_Detection bemfDetection;
 
 	struct {
 		bool trainPI 	= true;
@@ -79,9 +96,7 @@ private:
 	} Flags;
 
 	struct {
-		float bemf1;
-		float bemf2;
-		float bemf3;
+		float bemf;
 		float dcCurrent;
 		float dcVoltage;
 		float temperature;
@@ -116,7 +131,7 @@ private:
 	uint16_t pole_pairs;
 
 public:
-	SixStepCommutation(Timer1 * pwm, Timer2 * rpm, Timer6 * comm) :
+	SixStepCommutation(Timer1 * pwm, Timer4 * rpm, Timer6 * comm) :
 					   pwmTimer(pwm), rpmTimer(rpm), commTimer(comm) {
 
 	}
@@ -127,7 +142,7 @@ public:
 		Flags.diraction = dir;
 	}
 
-	void SetBemf1(float bemf){
+	/*void SetBemf1(float bemf){
 		Feedback.bemf1 = bemf;
 	}
 
@@ -137,7 +152,7 @@ public:
 
 	void SetBemf3(float bemf){
 		Feedback.bemf3 = bemf;
-	}
+	}*/
 
 	void SetDCCurrent(){
 		float current = 0;
@@ -163,7 +178,11 @@ public:
 
 	void Start();
 
-	void Run();
+	void Run(state& currentState);
+
+	void BemfDetection(state& currentState);
+
+	void Commutation();
 
 	void Stop();
 

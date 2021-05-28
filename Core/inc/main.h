@@ -14,6 +14,14 @@
 /* Function prototypes -------------------------------------------------------*/
 void SystemClock_Config(void);
 
+#define LEDX_ON() SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << 2));
+#define LEDX_OFF() SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << (2+16)));
+#define LEDX_TOGGLE() GPIOB->ODR ^= (GPIO_ODR_0 << 2);
+
+#define DEBUGPIN_1_ON() SET_BIT(GPIOC->BSRR, (GPIO_BSRR_BS_0  << 8));
+#define DEBUGPIN_1_OFF() SET_BIT(GPIOC->BSRR, (GPIO_BSRR_BS_0  << (8+16)));
+#define DEBUGPIN_1_TOGGLE() GPIOC->ODR ^= (GPIO_ODR_0 << 8);
+
 /* Defines -------------------------------------------------------------------*/
 #define FPWM (uint16_t)20000
 #define CONVERSIONS_COUNT 2
@@ -22,7 +30,7 @@ void SystemClock_Config(void);
 
 #define CURRENT_CONV_COEF 	(float)(0.00734F / (float)CONVERSIONS_COUNT)
 #define VOLTAGE_CONV_COEF 	(float)(0.0154F / (float)CONVERSIONS_COUNT)
-#define BEMF_CONV_COEF 		(float)(1.F / (float)CONVERSIONS_COUNT)
+#define BEMF_CONV_COEF 		(float)(0.0142F)
 #define TEMP_CONV_COEF 		(float)(1.F / (float)CONVERSIONS_COUNT)
 
 enum state {

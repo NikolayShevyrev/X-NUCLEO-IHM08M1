@@ -10,6 +10,7 @@
 #include "timers.h"
 #include "adc.h"
 #include "dma.h"
+#include "dac.h"
 #include "settings.h"
 #include "sixstepcomm.h"
 #include "delay.h"
@@ -18,18 +19,20 @@ void CheckButton(void);
 
 /* Variables ---------------------------------------------------------*/
 Timer1 timer1;
-Timer2 timer2;
 Timer6 timer6;
 Timer3 timer3;
+Timer4 timer4;
 
 ADC_1 adc1;
 ADC_2 adc2;
 DMA1Channel1 dma1ch1;
 DMA2Channel1 dma2ch1;
 
+Dac dac(2);
+
 SixStepCommSettings motorSettings;
 
-SixStepCommutation motor(&timer1, &timer2, &timer6);
+SixStepCommutation motor(&timer1, &timer4, &timer6);
 
 state currentState = Stopped;
 
@@ -44,11 +47,16 @@ int main(){
 	/* Initialize all configured peripherals */
 	GPIO_Init();
 	timer1.Init(motorSettings.fpwm);
+	timer4.Init();
 	timer3.Init();
+	timer6.Init();
 	adc1.Init();
 	adc2.Init();
 	dma1ch1.Init();
 	dma2ch1.Init();
+
+	dac.Enable();
+
 
 	/* Init Motor */
 	motor.Init(motorSettings);
@@ -73,7 +81,7 @@ void CheckButton(void){
 		}
 		/* Do somesthing */
 		currentState = Starting;
-		GPIO_SetPin(LedX);
+		//GPIO_SetPin(LedX);
 	}
 
 }

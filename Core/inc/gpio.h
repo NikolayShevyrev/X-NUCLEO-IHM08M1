@@ -27,6 +27,7 @@ public:
 // LEDs
 extern const gpio_t LedX;
 extern const gpio_t Led2;
+extern const gpio_t DebugPin_1;
 
 // Buttons
 extern const gpio_t Button;

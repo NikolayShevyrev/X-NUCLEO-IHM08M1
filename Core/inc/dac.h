@@ -21,13 +21,16 @@ public:
 
 	void Enable(){
 		/* DAC Clock Enable */
-		SET_BIT(RCC->APB1ENR, RCC_APB1ENR_DACEN);
+		SET_BIT(RCC->APB1ENR, RCC_APB1ENR_DAC1EN);
 
 		/* DAC channel_ pin init */
-		GPIO_AnalogPinInit((channel_ + 3), DAC_PORT);
+		GPIO_AnalogPinInit(DAC_1);
+		GPIO_AnalogPinInit(DAC_2);
 
 		/* DAC channel_ enable */
-		SET_BIT(DAC->CR, (DAC_CR_EN1 << ((channel_ - 1)*16)));
+		SET_BIT(DAC->CR, (DAC_CR_EN1 << ((1 - 1)*16)));
+		SET_BIT(DAC->CR, (DAC_CR_EN1 << ((2 - 1)*16)));
+		//SET_BIT(DAC->CR, (DAC_CR_EN1 << ((channel_ - 1)*16)));
 	}
 
 
