@@ -52,6 +52,10 @@ const gpio_t HALL1(GPIOA, 15);
 const gpio_t HALL2(GPIOB, 3);
 const gpio_t HALL3(GPIOB, 10);
 
+//I2C
+const gpio_t I2C_DIO(GPIOC, 10);
+const gpio_t I2C_CLK(GPIOC, 11);
+
 /**
   * @brief  GPIO ports initialization
   * @retval None
@@ -69,6 +73,8 @@ void GPIO_Init(void){
 	 */
 	GPIO_OutputPinInit(LedX, PushPull, High, NoPull);
 	GPIO_OutputPinInit(DebugPin_1, PushPull, High, NoPull);
+	GPIO_OutputPinInit(I2C_DIO, PushPull, VeryHigh, NoPull);
+	GPIO_OutputPinInit(I2C_CLK, PushPull, VeryHigh, NoPull);
 
 	/*
 	 * User Button = PC13

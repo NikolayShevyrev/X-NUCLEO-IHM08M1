@@ -45,7 +45,7 @@ struct MotorStartUp {
 	uint32_t sector_constant;
 
 	bool fRampOn = false;
-	StartUpState state;
+	StartUpState state = StartUpOff;
 
 };
 
@@ -80,6 +80,7 @@ private:
 	uint32_t tmp;
 
 	NonBlockingDelay startUpDelay;
+	NonBlockingDelay displayDelay;
 	dFilter<uint32_t, 4> rpmFilter;
 
 	MotorStartUp StartUp;
@@ -171,6 +172,7 @@ public:
 		voltage = voltage * VOLTAGE_CONV_COEF;
 		Feedback.dcVoltage = voltageFilter.Calc(voltage);
 	}
+
 
 	void SetTemperature(float temp){
 		Feedback.temperature = temp;

@@ -14,6 +14,7 @@
 #include "settings.h"
 #include "sixstepcomm.h"
 #include "delay.h"
+#include "TM1637.h"
 
 void CheckButton(void);
 
@@ -29,6 +30,7 @@ DMA1Channel1 dma1ch1;
 DMA2Channel1 dma2ch1;
 
 Dac dac(2);
+tm1637 display(I2C_CLK.port, I2C_CLK.pin, I2C_DIO.port, I2C_DIO.pin);
 
 SixStepCommSettings motorSettings;
 
@@ -64,6 +66,12 @@ int main(){
 	timer1.Start();
 	timer1.PWMOutputsOn();
 
+	display.initDisplay(BRIGHT);
+	display.display(0x00, '-');
+	display.display(0x01, '0');
+	display.display(0x02, 'f');
+	display.display(0x03, 'f');
+
 	while(1){
 		CheckButton();
 	}
@@ -74,13 +82,18 @@ int main(){
   * @retval None
   */
 void CheckButton(void){
-	if(GPIO_ReadPin(Button)){
-		DelayUS(10);
-		while(GPIO_ReadPin(Button)){
-			DelayUS(10);
+	if(!GPIO_ReadPin(Button)){
+		DelayUS(100);
+		while(!GPIO_ReadPin(Button)){
+			DelayUS(100);
 		}
 		/* Do somesthing */
-		currentState = Starting;
+		if(currentState == Stopped) {
+			currentState = Starting;
+		}
+		else {
+			currentState = Stopping;
+		}
 		//GPIO_SetPin(LedX);
 	}
 

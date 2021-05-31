@@ -7,6 +7,7 @@
 
 #include "sixstepcomm.h"
 #include "adc.h"
+#include "TM1637.h"
 
 void SixStepCommutation::Init(const SixStepCommSettings& settings){
 	StartUp.duty 			= (uint16_t)((float)pwmTimer->GetPWMPeriod() * settings.startup_duty);
@@ -40,7 +41,8 @@ void SixStepCommutation::Run(state& currentState){
 			break;
 		case Starting:
 			startUpDelay.Tick();
-			if(StartUp.fRampOn == false){
+			displayDelay.Tick();
+			if(StartUp.state == StartUpOff){
 				Align();
 			} else {
 				Ramp();
@@ -50,12 +52,14 @@ void SixStepCommutation::Run(state& currentState){
 			/*if(Flags.preCommutation == false){
 				blankingCount++;
 			}*/
+			displayDelay.Tick();
 			if(stallCount > stallLimit){
 				currentState = Fault;
 			}
 			break;
 		case Stopping:
 			this->Stop();
+			currentState = Stopped;
 			break;
 		case Fault:
 			this->Stop();
@@ -66,6 +70,8 @@ void SixStepCommutation::Run(state& currentState){
 }
 
 void SixStepCommutation::BemfDetection(state& currentState){
+
+	extern tm1637 display;
 
 	if(Flags.preCommutation == true) { return; }
 
@@ -78,9 +84,7 @@ void SixStepCommutation::BemfDetection(state& currentState){
 		comparatorOutputs += bemfDetection.comp[commSector];
 	}
 
-	//WRITE_REG(DAC->DHR12R2, (uint16_t)(Feedback.bemf*100));
 	WRITE_REG(DAC->DHR12R2, adc_data_bemf[bemfDetection.current[commSector]]);
-	WRITE_REG(DAC->DHR12R1, (uint16_t)(Feedback.dcVoltage*100));
 
 	if(BEMFDetection() == true){
 
@@ -118,6 +122,10 @@ void SixStepCommutation::BemfDetection(state& currentState){
 			SpeedLoopController();
 		}
 
+		if(displayDelay.GetState() == Off){
+			display.displayNum(currentRPM, 0);
+			displayDelay.Start(20000);
+		}
 
 	} else {
 
@@ -148,6 +156,7 @@ void SixStepCommutation::Commutation(){
 void SixStepCommutation::Stop(){
 
 	extern ADC_2 adc2;
+	extern tm1637 display;
 
 	pwmTimer->PWMOutputsOff();
 	startUpDelay.Stop();
@@ -162,8 +171,14 @@ void SixStepCommutation::Stop(){
 
 	adc2.StopRegularConv();
 
+	display.display(0x00, '-');
+	display.display(0x01, '0');
+	display.display(0x02, 'f');
+	display.display(0x03, 'f');
+
 
 	Flags.preCommutation = false;
+	StartUp.state = StartUpOff;
 	bemfFilter.value = 0;
 	blankingCount = 0;
 	stallCount = 0;
@@ -201,7 +216,6 @@ void SixStepCommutation::Align(){
 	StartUp.Time.current = StartUp.Time.start * 10;
 	StartUp.Time.sector = 0;
 	StartUp.state = AlignmentOn;
-	StartUp.fRampOn = true;
 
 	// Non-blocking delay for alingment
 	startUpDelay.Start(StartUp.Time.alignment * pwmTimer->Getpwm100usFactor() * 10);

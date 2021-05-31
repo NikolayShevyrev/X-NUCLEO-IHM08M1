@@ -66,6 +66,10 @@ extern const gpio_t HALL1;
 extern const gpio_t HALL2;
 extern const gpio_t HALL3;
 
+//I2C
+extern const gpio_t I2C_DIO;
+extern const gpio_t I2C_CLK;
+
 
 enum OutputType {
 	PushPull,
