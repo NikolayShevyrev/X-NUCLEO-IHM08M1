@@ -25,6 +25,8 @@ struct SixStepCommSettings {
 	uint16_t pole_pairs;
 	float	 startup_duty;
 	uint16_t startup_rpm;
+	uint16_t initialRPM;
+	float 	 accelaration;
 	uint16_t max_rpm;
 	uint16_t desired_rpm;
 	uint32_t rotor_align_t;

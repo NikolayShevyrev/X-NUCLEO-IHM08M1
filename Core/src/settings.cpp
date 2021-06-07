@@ -19,7 +19,9 @@ void FillSixStepCommSettings(SixStepCommSettings& settings){
 	settings.fpwm 			= 20000;
 	settings.pole_pairs 	= 12;
 	settings.startup_duty 	= 0.8;
-	settings.startup_rpm 	= 50;
+	settings.initialRPM		= 6;
+	settings.accelaration	= 0.95; // Should be less then 1
+	settings.startup_rpm 	= 60;
 	settings.max_rpm 		= 150;
 	settings.desired_rpm 	= 100;
 	settings.rotor_align_t	= 50;

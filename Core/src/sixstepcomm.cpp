@@ -11,6 +11,8 @@
 
 void SixStepCommutation::Init(const SixStepCommSettings& settings){
 	StartUp.duty 			= (uint16_t)((float)pwmTimer->GetPWMPeriod() * settings.startup_duty);
+	StartUp.initialRPM		= settings.initialRPM;
+	StartUp.acceleration	= settings.accelaration;
 	StartUp.rpm 			= settings.startup_rpm;
 	pole_pairs 				= settings.pole_pairs;
 	StartUp.Time.start 		= 20;
@@ -23,9 +25,9 @@ void SixStepCommutation::Init(const SixStepCommSettings& settings){
 	maxRPM 		= settings.max_rpm;
 	desiredRPM	= settings.desired_rpm;
 
-	timer_to_rpm = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)71.f));
-	timer_min 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)71.f * (float)maxRPM));
-	timer_max 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)71.f * (float)StartUp.rpm));
+	timer_to_rpm = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)72.f));
+	timer_min 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)72.f * (float)maxRPM));
+	timer_max 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)72.f * (float)StartUp.rpm));
 
 	minDuty = (uint16_t)((float)pwmTimer->GetPWMPeriod() * (float)0.1);
 	maxDuty = pwmTimer->GetPWMPeriod();
@@ -203,9 +205,11 @@ void SixStepCommutation::Align(){
 	pwmTimer->SetDiraction(Flags.diraction);
 
 	// Initialize TMR7 and rpm Filter average with the value corresponding to the minimum motor speed
+	currentRPM = StartUp.initialRPM;
 	rpmTimer->SetCNT(timer_max);
 	rpmFilter.Reset();
-	rpmFilter.FillBuffer(timer_max);
+	rpmFilter.FillBuffer(timer_to_rpm/currentRPM);
+
 
 	currentDuty = StartUp.duty;
 	pwmTimer->SetDuty(currentDuty);
@@ -258,36 +262,37 @@ void SixStepCommutation::Ramp(){
 	startUpDelay.Start(StartUp.Time.sector * pwmTimer->Getpwm100usFactor());
 }
 
-float acceleration = 0.05;
-float stop_sect = 1000;
-int start_cnt0 = 3;
 void SixStepCommutation::CalcSector(){
 
 	extern ADC_2 adc2;
 
-	if(StartUp.Time.current < (uint32_t)(StartUp.Time.ramp*10)){
-		stop_sect -= start_cnt0;
-		if((stop_sect) < 0){
-			stop_sect = 0;
-		}
-		StartUp.Time.sector = StartUp.sector_constant/(StartUp.Time.current/acceleration)+stop_sect;
+	if(StartUp.state == AlignmentOn){
+
+		StartUp.Time.sector = timer_to_rpm/currentRPM;
 		if(StartUp.Time.sector <= 0) StartUp.Time.sector = 1;
 		StartUp.state = RampOn;
 
-	} else if(StartUp.Time.current < (uint32_t)(StartUp.Time.ramp*10 + StartUp.Time.sust*10)){
+	} else if(currentRPM < StartUp.rpm){
 
+		StartUp.Time.sector *= StartUp.acceleration;
+		currentRPM = rpmFilter.Calc(StartUp.Time.sector);
+		StartUp.state = RampOn;
+
+	} else if(StartUp.sustCount < StartUp.sustLimit){
+
+		StartUp.sustCount++;
+		currentRPM = rpmFilter.Calc(StartUp.Time.sector);
 		StartUp.state = SustOn;
 
 	} else {
 
+		currentRPM = rpmFilter.Calc(StartUp.Time.sector);
 		StartUp.state = StartUpOver;
-		adc2.StartRegularConv();
 		Flags.preCommutation = false;
+		adc2.StartRegularConv();
 
 	}
 
-	StartUp.Time.current += StartUp.Time.sector;
-	if(StartUp.Time.current > TIME_LIMIT) StartUp.Time.current = TIME_LIMIT;
 }
 
 bool SixStepCommutation::BEMFDetection(){

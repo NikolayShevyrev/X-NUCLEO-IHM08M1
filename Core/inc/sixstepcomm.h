@@ -41,8 +41,13 @@ struct MotorStartUp {
 	} Time;
 
 	uint16_t duty;
+	uint16_t initialRPM;
+	float acceleration;
 	uint16_t rpm;
 	uint32_t sector_constant;
+
+	uint32_t sustCount = 0;
+	uint32_t sustLimit = 12;
 
 	bool fRampOn = false;
 	StartUpState state = StartUpOff;
