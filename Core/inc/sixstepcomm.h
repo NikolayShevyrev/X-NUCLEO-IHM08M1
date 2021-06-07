@@ -91,7 +91,7 @@ private:
 		bool trainPI 	= true;
 		bool startUp 	= false;
 		bool runMotor	= false;
-		bool diraction	= true;
+		bool diraction	= false;
 		bool preCommutation = false;
 		bool bemfDetection = false;
 	} Flags;

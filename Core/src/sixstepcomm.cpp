@@ -258,14 +258,19 @@ void SixStepCommutation::Ramp(){
 	startUpDelay.Start(StartUp.Time.sector * pwmTimer->Getpwm100usFactor());
 }
 
-
+float acceleration = 0.05;
+float stop_sect = 1000;
+int start_cnt0 = 3;
 void SixStepCommutation::CalcSector(){
 
 	extern ADC_2 adc2;
 
 	if(StartUp.Time.current < (uint32_t)(StartUp.Time.ramp*10)){
-
-		StartUp.Time.sector = StartUp.sector_constant/StartUp.Time.current;
+		stop_sect -= start_cnt0;
+		if((stop_sect) < 0){
+			stop_sect = 0;
+		}
+		StartUp.Time.sector = StartUp.sector_constant/(StartUp.Time.current/acceleration)+stop_sect;
 		if(StartUp.Time.sector <= 0) StartUp.Time.sector = 1;
 		StartUp.state = RampOn;
 
