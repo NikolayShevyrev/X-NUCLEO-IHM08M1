@@ -52,25 +52,27 @@ int main(){
 	timer4.Init();
 	timer3.Init();
 	timer6.Init();
-	adc1.Init();
-	adc2.Init();
 	dma1ch1.Init();
 	dma2ch1.Init();
 
 	dac.Enable();
 
+	adc1.Init();
+	adc2.Init();
 
 	/* Init Motor */
 	motor.Init(motorSettings);
+
+	motor.SetDiraction(Anticlockwise);
 
 	timer1.Start();
 	timer1.PWMOutputsOn();
 
 	display.initDisplay(BRIGHT);
 	display.display(0x00, '-');
-	display.display(0x01, '0');
-	display.display(0x02, 'f');
-	display.display(0x03, 'f');
+	display.display(0x01, 'r');
+	display.display(0x02, 'D');
+	display.display(0x03, 'Y');
 
 	while(1){
 		CheckButton();

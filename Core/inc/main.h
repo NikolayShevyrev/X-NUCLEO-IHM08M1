@@ -30,7 +30,7 @@ void SystemClock_Config(void);
 
 #define CURRENT_CONV_COEF 	(float)(0.00734F / (float)CONVERSIONS_COUNT)
 #define VOLTAGE_CONV_COEF 	(float)(0.0154F / (float)CONVERSIONS_COUNT)
-#define BEMF_CONV_COEF 		(float)(0.0142F)
+#define BEMF_CONV_COEF 		(float)(0.012F)
 #define TEMP_CONV_COEF 		(float)(1.F / (float)CONVERSIONS_COUNT)
 
 enum state {

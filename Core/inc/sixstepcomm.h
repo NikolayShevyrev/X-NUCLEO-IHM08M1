@@ -16,7 +16,7 @@
 
 #define TIME_LIMIT (uint32_t)4000000000
 #define MIN_SECTOR_TIME (uint32_t)8
-#define ADVENCE_ANGLE_COEFF (float)0.9F
+#define ADVENCE_ANGLE_COEFF (float)0.95F
 
 enum Diraction {
 	Clockwise = true,
@@ -68,8 +68,9 @@ struct BEMF_Detection {
 	bool flag = false;
 	uint32_t count;
 	uint32_t error;
-	const uint32_t limit = 10;
-	const uint16_t current[6] = {2, 1, 0, 2, 1, 0};
+	const uint32_t limit = 6;
+	const uint16_t current_clkw[6] = {2, 1, 0, 2, 1, 0};
+	uint16_t current[6];
 	const uint16_t comp[6] = {4, 2, 1, 4, 2, 1};
 };
 
@@ -96,7 +97,7 @@ private:
 		bool trainPI 	= true;
 		bool startUp 	= false;
 		bool runMotor	= false;
-		bool diraction	= false;
+		bool diraction	= true;
 		bool preCommutation = false;
 		bool bemfDetection = false;
 	} Flags;
@@ -124,7 +125,7 @@ private:
 	uint16_t stallLimit;
 	uint16_t blankingLimit;
 
-	uint16_t currentRPM;
+	uint32_t currentRPM;
 	uint16_t desiredRPM;
 
 	uint16_t minRPM;
@@ -147,18 +148,6 @@ public:
 	void SetDiraction(Diraction dir){
 		Flags.diraction = dir;
 	}
-
-	/*void SetBemf1(float bemf){
-		Feedback.bemf1 = bemf;
-	}
-
-	void SetBemf2(float bemf){
-		Feedback.bemf2 = bemf;
-	}
-
-	void SetBemf3(float bemf){
-		Feedback.bemf3 = bemf;
-	}*/
 
 	void SetDCCurrent(){
 		float current = 0;
@@ -203,6 +192,8 @@ private:
     void CalcSector();
 
     bool BEMFDetection();
+
+    void SetDiraction(bool dir);
 
 };
 

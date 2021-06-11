@@ -38,6 +38,8 @@ void SixStepCommutation::Init(const SixStepCommSettings& settings){
 
 void SixStepCommutation::Run(state& currentState){
 
+	extern tm1637 display;
+
 	switch(currentState){
 		case Stopped:
 			break;
@@ -51,19 +53,24 @@ void SixStepCommutation::Run(state& currentState){
 			}
 			break;
 		case Running:
-			/*if(Flags.preCommutation == false){
-				blankingCount++;
-			}*/
 			displayDelay.Tick();
 			if(stallCount > stallLimit){
 				currentState = Fault;
 			}
 			break;
 		case Stopping:
+			display.display(0x00, 'S');
+			display.display(0x01, 'T');
+			display.display(0x02, 'O');
+			display.display(0x03, 'P');
 			this->Stop();
 			currentState = Stopped;
 			break;
 		case Fault:
+			display.display(0x00, '-');
+			display.display(0x01, 'E');
+			display.display(0x02, 'r');
+			display.display(0x03, 'r');
 			this->Stop();
 			break;
 		default:
@@ -173,11 +180,6 @@ void SixStepCommutation::Stop(){
 
 	adc2.StopRegularConv();
 
-	display.display(0x00, '-');
-	display.display(0x01, '0');
-	display.display(0x02, 'f');
-	display.display(0x03, 'f');
-
 
 	Flags.preCommutation = false;
 	StartUp.state = StartUpOff;
@@ -201,8 +203,9 @@ void SixStepCommutation::Align(){
 
 	stallCount = 0;
 	blankingCount = 0;
+	StartUp.sustCount = 0;
 
-	pwmTimer->SetDiraction(Flags.diraction);
+	SetDiraction(Flags.diraction);
 
 	// Initialize TMR7 and rpm Filter average with the value corresponding to the minimum motor speed
 	currentRPM = StartUp.initialRPM;
@@ -229,6 +232,8 @@ void SixStepCommutation::Align(){
 }
 
 void SixStepCommutation::Ramp(){
+
+	extern tm1637 display;
 
 	if(startUpDelay.GetState() == On) { return; }
 
@@ -258,6 +263,10 @@ void SixStepCommutation::Ramp(){
 
 	pwmTimer->SwitchCommSector(commSector);
 
+	if(displayDelay.GetState() == Off){
+		display.displayNum(currentRPM, 0);
+		displayDelay.Start(20000);
+	}
 
 	startUpDelay.Start(StartUp.Time.sector * pwmTimer->Getpwm100usFactor());
 }
@@ -268,25 +277,30 @@ void SixStepCommutation::CalcSector(){
 
 	if(StartUp.state == AlignmentOn){
 
-		StartUp.Time.sector = timer_to_rpm/currentRPM;
+		StartUp.Time.sector = (timer_to_rpm/currentRPM)/(uint32_t)100;
 		if(StartUp.Time.sector <= 0) StartUp.Time.sector = 1;
 		StartUp.state = RampOn;
 
-	} else if(currentRPM < StartUp.rpm){
+	} else if(StartUp.state == RampOn){
 
-		StartUp.Time.sector *= StartUp.acceleration;
-		currentRPM = rpmFilter.Calc(StartUp.Time.sector);
-		StartUp.state = RampOn;
+		StartUp.Time.sector = (uint32_t)((float)StartUp.Time.sector*StartUp.acceleration);
+		currentRPM = (float)timer_to_rpm/rpmFilter.Calc(StartUp.Time.sector*100);
+		if(StartUp.Time.sector <= 0) {
+			StartUp.Time.sector = 1;
+		}
+		if(currentRPM > StartUp.rpm){
+			StartUp.state = SustOn;
+		}
 
 	} else if(StartUp.sustCount < StartUp.sustLimit){
 
 		StartUp.sustCount++;
-		currentRPM = rpmFilter.Calc(StartUp.Time.sector);
+		currentRPM = (float)timer_to_rpm/rpmFilter.Calc(StartUp.Time.sector*100);
 		StartUp.state = SustOn;
 
 	} else {
 
-		currentRPM = rpmFilter.Calc(StartUp.Time.sector);
+		currentRPM = (float)timer_to_rpm/rpmFilter.Calc(StartUp.Time.sector*100);
 		StartUp.state = StartUpOver;
 		Flags.preCommutation = false;
 		adc2.StartRegularConv();
@@ -314,3 +328,16 @@ void SixStepCommutation::SpeedLoopController(){
 	pwmTimer->SetDuty(currentDuty);
 }
 
+void SixStepCommutation::SetDiraction(bool dir){
+
+	pwmTimer->SetDiraction(dir);
+	if(dir) {
+		for(int i = 0; i < 6; i++){
+			 bemfDetection.current[i] = bemfDetection.current_clkw[i];
+		}
+	} else {
+		for(int i = 0; i < 6; i++){
+			bemfDetection.current[i] = bemfDetection.current_clkw[5-i];
+		}
+	}
+}

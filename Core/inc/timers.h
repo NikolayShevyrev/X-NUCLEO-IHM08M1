@@ -52,9 +52,9 @@ public:
 
 class Timer1 : public Timer {
 private:
-	uint16_t period_;
-	uint16_t pwmFrequnce_;
-	uint16_t pwm100usFactor;
+	uint16_t period_ = 0;
+	uint16_t pwmFrequnce_ = 0;
+	uint16_t pwm100usFactor = 0;
 	/*
 	 * Capture/Compare output enable depending on the commutation sector
 	 * 0x1 -> OCx is output, OCxN is not active

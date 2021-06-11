@@ -121,11 +121,11 @@ private:
 	}
 
 	void dio_input_mode(){
-		dio_port_->MODER &= ~ GPIO_MODER_MODER0 << (dio_pin_ * 2);
+		CLEAR_BIT(dio_port_->MODER, GPIO_MODER_MODER0 << (dio_pin_ * 2));
 	}
 
 	void dio_output_mode(){
-		dio_port_->MODER |= GPIO_MODER_MODER0_0  << (dio_pin_ * 2);
+		SET_BIT(dio_port_->MODER, GPIO_MODER_MODER0_0  << (dio_pin_ * 2));
 	}
 
 	void start(){
