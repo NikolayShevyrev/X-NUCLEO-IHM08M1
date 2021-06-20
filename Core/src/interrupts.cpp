@@ -62,6 +62,7 @@ void DMA1_Channel1_IRQHandler(void) {
 
 	motor.SetDCCurrent();
 	motor.SetDCVoltage();
+	motor.SetTemperature();
 
 	dma1ch1.TransferCompleteInterruptFlagClear();
 

@@ -85,6 +85,12 @@ private:
 
 	uint32_t tmp;
 
+	const uint32_t ntcResistance[34] = { 188500, 144290, 111330, 86560, 67790, 53460,
+										 42450, 33930, 27280, 22070, 17960, 14700, 12090,
+										 10000, 8310, 6940, 5830, 4910, 4160, 3540, 3020,
+										 2590, 2230, 1920, 1670, 1450, 1270, 1110, 975, 860,
+										 760, 674, 599, 534};
+
 	NonBlockingDelay startUpDelay;
 	NonBlockingDelay displayDelay;
 	dFilter<uint32_t, 4> rpmFilter;
@@ -168,8 +174,27 @@ public:
 	}
 
 
-	void SetTemperature(float temp){
-		Feedback.temperature = temp;
+	void SetTemperature(){
+		float u2 = 0, ntc = 0;
+		for(int i = 0; i < (CONVERSIONS_COUNT*3); i+=3){
+			u2 += adc_data[i];
+		}
+		u2 = u2 * NTC_CONV_COEF;
+		ntc = 4700.f * (3.3f - u2) / u2;
+
+		//Find closest resistance
+		uint16_t index = 0;
+		for (int i = 1; i < 34; i++){
+			if(ntc < ntcResistance[i]){
+				index = i;
+			} else {
+				if((ntc - ntcResistance[i]) < (ntcResistance[index] - ntc)){
+					index = i;
+				}
+				break;
+			}
+		}
+		Feedback.temperature = ((float)index * 5.f) - 40.f;
 	}
 
 	void Start();

@@ -325,7 +325,7 @@ public:
 
 	virtual void Init();
 
-	float GetDCCurrent(void){
+	/*float GetDCCurrent(void){
 		float current = 0;
 		for(int i = 2 ; i < (CONVERSIONS_COUNT*3); i+=3){
 			current += data[i];
@@ -351,7 +351,7 @@ public:
 		}
 		temp = temp * TEMP_CONV_COEF;
 		return tempFilter.Calc(temp);
-	}
+	}*/
 };
 
 class DMA2Channel1 : public DMA {
