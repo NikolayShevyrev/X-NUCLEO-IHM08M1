@@ -29,7 +29,7 @@ ADC_2 adc2;
 DMA1Channel1 dma1ch1;
 DMA2Channel1 dma2ch1;
 
-Dac dac(2);
+//Dac dac(2);
 tm1637 display(I2C_CLK.port, I2C_CLK.pin, I2C_DIO.port, I2C_DIO.pin);
 
 SixStepCommSettings motorSettings;
@@ -55,7 +55,7 @@ int main(){
 	dma1ch1.Init();
 	dma2ch1.Init();
 
-	dac.Enable();
+	//dac.Enable();
 
 	adc1.Init();
 	adc2.Init();

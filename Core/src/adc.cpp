@@ -34,9 +34,22 @@ void ADC_1::Init(){
 	ConvertionInRegularSequence(5, 2);
 	ConvertionInRegularSequence(6, 7);
 
+	/*
+	 * Analog Watchdog 1
+	 */
+	AWD1EnableOnRegularChannels();
+	AWD1OnSingleChannel();
+	AWD1ChannelSelection(8);
+
+	AWD1HigherThreshold(AWD1_HT);
+	AWD1LowerThreshold(AWD1_LT);
+
+	AWD1InterruptEnable();
+	NVIC_SetPriority(ADC1_2_IRQn , 0);
+	NVIC_EnableIRQ(ADC1_2_IRQn);
+
 	Enable();
 	StartRegularConv();
-
 }
 
 void ADC_1::PinsInit(){
@@ -85,14 +98,10 @@ void ADC_2::PinsInit(){
 	 * PC3 -> BEMF1 Channel 9
 	 * PC4 -> BEMF2 Channel 5
 	 * PC5 -> BEMF3 Channel 11
-	 * PA5 -> Channel 2
-	 * PA4 -> Channel 1
 	 */
 	GPIO_AnalogPinInit(BEMF1);
 	GPIO_AnalogPinInit(BEMF2);
 	GPIO_AnalogPinInit(BEMF3);
-	//GPIO_AnalogPinInit(DAC_1);
-	//GPIO_AnalogPinInit(DAC_2);
 
 
 	/*
@@ -102,5 +111,4 @@ void ADC_2::PinsInit(){
 
 	// Pull gpio_bemf to gnd
 	GPIO_ResetPin(GPIO_BEMF);
-	//GPIO_SetPin(GPIO_BEMF);
 }

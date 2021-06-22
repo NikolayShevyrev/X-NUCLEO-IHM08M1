@@ -13,6 +13,7 @@
 #include "dma.h"
 #include "adc.h"
 #include "dfilter.h"
+#include "TM1637.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -85,6 +86,26 @@ void DMA2_Channel1_IRQHandler(void) {
 
 
 }
+
+/**
+  * @brief  ADC1 Interrupt Service Routine
+  * @retval None
+  */
+void ADC1_2_IRQHandler(void) {
+	extern ADC_1 adc1;
+	extern tm1637 display;
+	extern state currentState;
+
+	if(adc1.AWD1GetInterruptFlag() == true){
+		adc1.AWD1ClearInterruptFlag();
+		currentState = Fault;
+		display.display(0x00, '-');
+		display.display(0x01, 'O');
+		display.display(0x02, 'V');
+		display.display(0x03, 'T');
+	}
+}
+
 
 #ifdef __cplusplus
 }

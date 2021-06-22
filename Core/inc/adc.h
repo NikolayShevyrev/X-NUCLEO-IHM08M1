@@ -212,6 +212,132 @@ public:
 		SET_BIT(base_->JSQR, (channel << (2U + 6 * convertion)));
 	}
 
+	/*
+	 * Analog Watchdog 1
+	 */
+
+	void AWD1ChannelSelection(uint16_t channel) const {
+		SET_BIT(base_->CFGR, channel << ADC_CFGR_AWD1CH_Pos);
+	}
+
+	void AWD1EnableOnInjectedChannels() const {
+		SET_BIT(base_->CFGR, ADC_CFGR_JAWD1EN);
+	}
+
+	void AWD1EnableOnRegularChannels() const {
+		SET_BIT(base_->CFGR, ADC_CFGR_AWD1EN);
+	}
+
+	void AWD1OnAllChannels() const {
+		CLEAR_BIT(base_->CFGR, ADC_CFGR_AWD1SGL);
+	}
+
+	void AWD1OnSingleChannel() const {
+		SET_BIT(base_->CFGR, ADC_CFGR_AWD1SGL);
+	}
+
+	/*
+	 * Analog Watchdog 2 Configuration Register
+	 */
+	void AWD2ChannelSelection(uint16_t channel){
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
+			SET_BIT(base_->AWD2CR, ADC_AWD2CR_AWD2CH_0 << channel);
+		}
+	}
+
+	/*
+	 * Analog Watchdog 3 Configuration Register
+	 */
+	void AWD3ChannelSelection(uint16_t channel){
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
+			SET_BIT(base_->AWD3CR, ADC_AWD3CR_AWD3CH_0 << channel);
+		}
+	}
+
+	/*
+	 * Analog Watchdog Threshold Registers
+	 */
+	void AWD1HigherThreshold(uint16_t threshold) const {
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
+			WRITE_REG(base_->TR1, threshold << ADC_TR1_HT1_Pos);
+		}
+	}
+
+	void AWD1LowerThreshold(uint16_t threshold) const {
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
+			WRITE_REG(base_->TR1, threshold << ADC_TR1_LT1_Pos);
+		}
+	}
+
+	void AWD2HigherThreshold(uint16_t threshold) const {
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
+			WRITE_REG(base_->TR2, threshold << ADC_TR2_HT2_Pos);
+		}
+	}
+
+	void AWD2LowerThreshold(uint16_t threshold) const {
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
+			WRITE_REG(base_->TR2, threshold << ADC_TR2_LT2_Pos);
+		}
+	}
+
+	void AWD3HigherThreshold(uint16_t threshold) const {
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
+			WRITE_REG(base_->TR3, threshold << ADC_TR3_HT3_Pos);
+		}
+	}
+
+	void AWD3LowerThreshold(uint16_t threshold) const {
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
+			WRITE_REG(base_->TR3, threshold << ADC_TR3_LT3_Pos);
+		}
+	}
+
+	/*
+	 * Analog Watchdogs Interrupts
+	 */
+
+	void AWD1InterruptEnable() const {
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
+			SET_BIT(base_->IER, ADC_IER_AWD1IE);
+		}
+	}
+
+	bool AWD1GetInterruptFlag() const {
+		return READ_BIT(base_->ISR, ADC_ISR_AWD1);
+	}
+
+	void AWD1ClearInterruptFlag() const {
+		CLEAR_BIT(base_->ISR, ADC_ISR_AWD1);
+	}
+
+	void AWD2InterruptEnable() const {
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
+			SET_BIT(base_->IER, ADC_IER_AWD2IE);
+		}
+	}
+
+	bool AWD2GetInterruptFlag() const {
+		return READ_BIT(base_->ISR, ADC_ISR_AWD2);
+	}
+
+	void AWD2ClearInterruptFlag() const {
+		CLEAR_BIT(base_->ISR, ADC_ISR_AWD2);
+	}
+
+	void AWD3InterruptEnable() const {
+		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
+			SET_BIT(base_->IER, ADC_IER_AWD3IE);
+		}
+	}
+
+	bool AWD3GetInterruptFlag() const {
+		return READ_BIT(base_->ISR, ADC_ISR_AWD3);
+	}
+
+	void AWD3ClearInterruptFlag() const {
+		CLEAR_BIT(base_->ISR, ADC_ISR_AWD3);
+	}
 };
 
 class ADC_1 : public ADC {

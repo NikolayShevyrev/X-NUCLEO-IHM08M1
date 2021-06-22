@@ -67,10 +67,10 @@ void SixStepCommutation::Run(state& currentState){
 			currentState = Stopped;
 			break;
 		case Fault:
-			display.display(0x00, '-');
-			display.display(0x01, 'E');
-			display.display(0x02, 'r');
-			display.display(0x03, 'r');
+			//display.display(0x00, '-');
+			//display.display(0x01, 'E');
+			//display.display(0x02, 'r');
+			//display.display(0x03, 'r');
 			this->Stop();
 			break;
 		default:
@@ -93,7 +93,7 @@ void SixStepCommutation::BemfDetection(state& currentState){
 		comparatorOutputs += bemfDetection.comp[commSector];
 	}
 
-	WRITE_REG(DAC->DHR12R2, adc_data_bemf[bemfDetection.current[commSector]]);
+	//WRITE_REG(DAC->DHR12R2, adc_data_bemf[bemfDetection.current[commSector]]);
 
 	if(BEMFDetection() == true){
 
@@ -288,7 +288,7 @@ void SixStepCommutation::CalcSector(){
 		if(StartUp.Time.sector <= 0) {
 			StartUp.Time.sector = 1;
 		}
-		if(currentRPM > StartUp.rpm){
+		if(currentRPM >= StartUp.rpm){
 			StartUp.state = SustOn;
 		}
 
