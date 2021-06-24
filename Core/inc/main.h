@@ -34,6 +34,8 @@ void SystemClock_Config(void);
 #define BEMF_CONV_COEF 		(float)(0.0146627566F)
 #define NTC_CONV_COEF 		(float)(0.00080586F / (float)CONVERSIONS_COUNT)
 
+#define MAX_TEMP 			(uint16_t)100
+
 //#define AWD1_HT				(uint16_t)(2.73F / 0.00080586F) // 100 degres
 #define AWD1_HT				(uint16_t)(52.F / 0.0154F) // 100 degres
 #define AWD1_LT				0

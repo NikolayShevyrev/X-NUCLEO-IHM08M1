@@ -13,6 +13,7 @@
 #include "delay.h"
 #include "settings.h"
 #include "dfilter.h"
+#include "TM1637.h"
 
 #define TIME_LIMIT (uint32_t)4000000000
 #define MIN_SECTOR_TIME (uint32_t)8
@@ -195,6 +196,19 @@ public:
 			}
 		}
 		Feedback.temperature = ((float)index * 5.f) - 40.f;
+	}
+
+	void OverTempProtection(state& currentState){
+		extern tm1637 display;
+
+		if(Feedback.temperature >= MAX_TEMP){
+			Stop();
+			currentState = Fault;
+			display.display(0x00, '-');
+			display.display(0x01, 'O');
+			display.display(0x02, 'V');
+			display.display(0x03, 'T');
+		}
 	}
 
 	void Start();

@@ -60,10 +60,13 @@ void TIM6_DAC_IRQHandler(void) {
 void DMA1_Channel1_IRQHandler(void) {
 	extern DMA1Channel1 dma1ch1;
 	extern SixStepCommutation motor;
+	extern state currentState;
 
 	motor.SetDCCurrent();
 	motor.SetDCVoltage();
 	motor.SetTemperature();
+
+	motor.OverTempProtection(currentState);
 
 	dma1ch1.TransferCompleteInterruptFlagClear();
 

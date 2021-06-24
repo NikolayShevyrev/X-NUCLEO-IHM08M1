@@ -7,7 +7,7 @@
 
 #include "sixstepcomm.h"
 #include "adc.h"
-#include "TM1637.h"
+
 
 void SixStepCommutation::Init(const SixStepCommSettings& settings){
 	StartUp.duty 			= (uint16_t)((float)pwmTimer->GetPWMPeriod() * settings.startup_duty);
@@ -67,10 +67,6 @@ void SixStepCommutation::Run(state& currentState){
 			currentState = Stopped;
 			break;
 		case Fault:
-			//display.display(0x00, '-');
-			//display.display(0x01, 'E');
-			//display.display(0x02, 'r');
-			//display.display(0x03, 'r');
 			this->Stop();
 			break;
 		default:
