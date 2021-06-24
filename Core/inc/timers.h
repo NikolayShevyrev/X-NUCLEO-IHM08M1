@@ -83,6 +83,12 @@ private:
 	const uint32_t MMS_STATES_CLWS[6] = {0x00000040, 0x00000040, 0x00000050, 0x00000050, 0x00000060, 0x00000060};
 	uint32_t MMS_STATES[6];
 
+	const struct {
+		uint16_t CCER 	= 0x0CCC;
+		uint16_t CCMR1	= 0x4848;
+		uint16_t CCMR2	= 0x0048;
+	} PWM_STOP_STATE;
+
 public:
 	Timer1() : Timer(TIM1) {
 	}
@@ -117,6 +123,16 @@ public:
 
 	void PWMOutputsOff(){
 		CLEAR_BIT(TIM1->BDTR, TIM_BDTR_MOE);
+	}
+
+	void PWMStopState(){
+		WRITE_REG(TIM1->CCER, PWM_STOP_STATE.CCER);
+		WRITE_REG(TIM1->CCMR1, PWM_STOP_STATE.CCMR1);
+		WRITE_REG(TIM1->CCMR2, PWM_STOP_STATE.CCMR2);
+
+		/* Generate Capture/Compare control update event */
+		SET_BIT(TIM1->EGR, TIM_EGR_COMG);
+		CLEAR_BIT(TIM1->SR, TIM_SR_COMIF);
 	}
 
 	uint16_t Getpwm100usFactor(){

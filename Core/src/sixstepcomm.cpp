@@ -165,9 +165,9 @@ void SixStepCommutation::Commutation(){
 void SixStepCommutation::Stop(){
 
 	extern ADC_2 adc2;
-	extern tm1637 display;
 
-	pwmTimer->PWMOutputsOff();
+	//pwmTimer->PWMOutputsOff();
+	pwmTimer->PWMStopState();
 	startUpDelay.Stop();
 
 	rpmTimer->Stop();
@@ -179,7 +179,6 @@ void SixStepCommutation::Stop(){
 	rpmFilter.Reset();
 
 	adc2.StopRegularConv();
-
 
 	Flags.preCommutation = false;
 	StartUp.state = StartUpOff;
@@ -193,7 +192,8 @@ void SixStepCommutation::Align(){
 
 	if(startUpDelay.GetState() == On) { return; }
 
-	pwmTimer->PWMOutputsOff();
+	//pwmTimer->PWMOutputsOff();
+	pwmTimer->PWMStopState();
 
 	rpmTimer->Stop();
 	rpmTimer->ResetCNT();

@@ -53,6 +53,10 @@ public:
 	ADC(ADC_TypeDef * base) : base_(base){
 	}
 
+	virtual ~ADC(){
+
+	}
+
 	virtual void Init(){
 
 	}
@@ -259,37 +263,43 @@ public:
 	 */
 	void AWD1HigherThreshold(uint16_t threshold) const {
 		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
-			WRITE_REG(base_->TR1, threshold << ADC_TR1_HT1_Pos);
+			CLEAR_BIT(base_->TR1, ADC_TR1_HT1);
+			SET_BIT(base_->TR1, threshold << ADC_TR1_HT1_Pos);
 		}
 	}
 
 	void AWD1LowerThreshold(uint16_t threshold) const {
 		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
-			WRITE_REG(base_->TR1, threshold << ADC_TR1_LT1_Pos);
+			CLEAR_BIT(base_->TR1, ADC_TR1_LT1);
+			SET_BIT(base_->TR1, threshold << ADC_TR1_LT1_Pos);
 		}
 	}
 
 	void AWD2HigherThreshold(uint16_t threshold) const {
 		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
-			WRITE_REG(base_->TR2, threshold << ADC_TR2_HT2_Pos);
+			CLEAR_BIT(base_->TR2, ADC_TR2_HT2);
+			SET_BIT(base_->TR2, threshold << ADC_TR2_HT2_Pos);
 		}
 	}
 
 	void AWD2LowerThreshold(uint16_t threshold) const {
 		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
-			WRITE_REG(base_->TR2, threshold << ADC_TR2_LT2_Pos);
+			CLEAR_BIT(base_->TR2, ADC_TR2_LT2);
+			SET_BIT(base_->TR2, threshold << ADC_TR2_LT2_Pos);
 		}
 	}
 
 	void AWD3HigherThreshold(uint16_t threshold) const {
 		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
-			WRITE_REG(base_->TR3, threshold << ADC_TR3_HT3_Pos);
+			CLEAR_BIT(base_->TR3, ADC_TR3_HT3);
+			SET_BIT(base_->TR3, threshold << ADC_TR3_HT3_Pos);
 		}
 	}
 
 	void AWD3LowerThreshold(uint16_t threshold) const {
 		if(!READ_BIT(base_->CR, ADC_CR_ADSTART) && !READ_BIT(base_->CR, ADC_CR_JADSTART)){
-			WRITE_REG(base_->TR3, threshold << ADC_TR3_LT3_Pos);
+			CLEAR_BIT(base_->TR3, ADC_TR3_LT3);
+			SET_BIT(base_->TR3, threshold << ADC_TR3_LT3_Pos);
 		}
 	}
 
@@ -347,6 +357,10 @@ public:
 
 	virtual void Init();
 	virtual void PinsInit();
+	void AWD1Init();
+	void AWD2Init();
+	void AWD3Init();
+
 };
 
 class ADC_2 : public ADC {

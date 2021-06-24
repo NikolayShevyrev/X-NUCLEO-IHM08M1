@@ -92,17 +92,19 @@ void DMA2_Channel1_IRQHandler(void) {
   * @retval None
   */
 void ADC1_2_IRQHandler(void) {
+	extern SixStepCommutation motor;
 	extern ADC_1 adc1;
 	extern tm1637 display;
 	extern state currentState;
 
 	if(adc1.AWD1GetInterruptFlag() == true){
+		motor.Stop();
 		adc1.AWD1ClearInterruptFlag();
 		currentState = Fault;
 		display.display(0x00, '-');
 		display.display(0x01, 'O');
 		display.display(0x02, 'V');
-		display.display(0x03, 'T');
+		display.display(0x03, 'V');
 	}
 }
 

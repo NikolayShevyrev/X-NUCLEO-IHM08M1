@@ -34,19 +34,7 @@ void ADC_1::Init(){
 	ConvertionInRegularSequence(5, 2);
 	ConvertionInRegularSequence(6, 7);
 
-	/*
-	 * Analog Watchdog 1
-	 */
-	AWD1EnableOnRegularChannels();
-	AWD1OnSingleChannel();
-	AWD1ChannelSelection(8);
-
-	AWD1HigherThreshold(AWD1_HT);
-	AWD1LowerThreshold(AWD1_LT);
-
-	AWD1InterruptEnable();
-	NVIC_SetPriority(ADC1_2_IRQn , 0);
-	NVIC_EnableIRQ(ADC1_2_IRQn);
+	AWD1Init();
 
 	Enable();
 	StartRegularConv();
@@ -63,6 +51,26 @@ void ADC_1::PinsInit(){
 	GPIO_AnalogPinInit(TEMP);
 }
 
+void ADC_1::AWD1Init(){
+	AWD1EnableOnRegularChannels();
+	AWD1OnSingleChannel();
+	AWD1ChannelSelection(2);
+
+	AWD1HigherThreshold(AWD1_HT);
+	AWD1LowerThreshold(AWD1_LT);
+
+	AWD1InterruptEnable();
+	NVIC_SetPriority(ADC1_2_IRQn , 0);
+	NVIC_EnableIRQ(ADC1_2_IRQn);
+}
+
+void ADC_1::AWD2Init(){
+
+}
+
+void ADC_1::AWD3Init(){
+
+}
 /*
  *  ADC2 for BEFM measurement
  */
