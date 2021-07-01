@@ -63,7 +63,7 @@ int main(){
 	/* Init Motor */
 	motor.Init(motorSettings);
 
-	motor.SetDiraction(Anticlockwise);
+	motor.SetDiraction(Clockwise);
 
 	timer1.Start();
 	timer1.PWMOutputsOn();

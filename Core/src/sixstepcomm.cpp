@@ -29,7 +29,7 @@ void SixStepCommutation::Init(const SixStepCommSettings& settings){
 	timer_min 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)72.f * (float)maxRPM));
 	timer_max 	 = (uint32_t)((float)10 * (float)SystemCoreClock/((float)pole_pairs * (float)72.f * (float)StartUp.rpm));
 
-	minDuty = (uint16_t)((float)pwmTimer->GetPWMPeriod() * (float)0.1);
+	minDuty = (uint16_t)((float)pwmTimer->GetPWMPeriod() * (float)0.f);
 	maxDuty = pwmTimer->GetPWMPeriod();
 
 	stallLimit 		= 14000;

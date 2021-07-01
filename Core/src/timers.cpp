@@ -93,7 +93,7 @@ void Timer1::Init(uint16_t pwmFrequnce){
 	 * Dead time = 500 ns
 	 */
 	SET_BIT(TIM1->BDTR, TIM_BDTR_OSSI | TIM_BDTR_OSSR);
-	SET_BIT(TIM1->BDTR, 0x0036);
+	SET_BIT(TIM1->BDTR, 0x0048);
 
 	/* Generate Capture/Compare control update event */
 	SET_BIT(TIM1->EGR, TIM_EGR_COMG);
