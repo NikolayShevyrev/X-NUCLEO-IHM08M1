@@ -34,6 +34,14 @@ void SixStepCommutation::Init(const SixStepCommSettings& settings){
 
 	stallLimit 		= 14000;
 	blankingLimit 	= 4;
+
+	//RPM Ramp
+	rpmRamp.minRpm 	= settings.rampMinRpm;
+	rpmRamp.maxRpm 	= settings.rampMaxRpm;
+	rpmRamp.constRpm 	= settings.rampConstRpm;
+	rpmRamp.time 	= settings.rampTime;
+	rpmRamp.step	= (settings.fpwm * rpmRamp.time) / (rpmRamp.maxRpm - rpmRamp.minRpm);
+
 }
 
 void SixStepCommutation::Run(state& currentState){
@@ -54,6 +62,8 @@ void SixStepCommutation::Run(state& currentState){
 			break;
 		case Running:
 			displayDelay.Tick();
+			rpmRampDelay.Tick();
+			RPMRamp();
 			if(stallCount > stallLimit){
 				currentState = Fault;
 			}
@@ -119,10 +129,7 @@ void SixStepCommutation::BemfDetection(state& currentState){
 		}
 		commTimer->SetARR(commutationTime);
 
-		//commTimer->Start();
-
 		if(currentState == Running){
-			DEBUGPIN_1_ON();
 			commTimer->Start();
 			SpeedLoopController();
 		}
@@ -141,15 +148,21 @@ void SixStepCommutation::BemfDetection(state& currentState){
 }
 
 void SixStepCommutation::Commutation(){
-	bemfFilter.value = 0;
-	blankingCount = 0;
+	extern state currentState;
 
-	//Change commutation sector
-	if((++commSector) > 5) { commSector = 0; }
+	if(currentState != Stopped && currentState != Stopping){
 
-	pwmTimer->SwitchCommSector(commSector);
+		bemfFilter.value = 0;
+		blankingCount = 0;
 
-	Flags.preCommutation = false;
+		//Change commutation sector
+		if((++commSector) > 5) { commSector = 0; }
+
+		pwmTimer->SwitchCommSector(commSector);
+
+		Flags.preCommutation = false;
+
+	}
 
 	commTimer->ClearUIF();
 	commTimer->Stop();
@@ -163,18 +176,17 @@ void SixStepCommutation::Stop(){
 	extern ADC_2 adc2;
 
 	//pwmTimer->PWMOutputsOff();
-	pwmTimer->PWMStopState();
-	startUpDelay.Stop();
-
+	adc2.StopRegularConv();
 	rpmTimer->Stop();
 	commTimer->Stop();
+	pwmTimer->PWMStopState();
+
+	startUpDelay.Stop();
 
 	rpmTimer->ResetCNT();
 	commTimer->ResetCNT();
 
 	rpmFilter.Reset();
-
-	adc2.StopRegularConv();
 
 	Flags.preCommutation = false;
 	StartUp.state = StartUpOff;
@@ -201,7 +213,23 @@ void SixStepCommutation::Align(){
 	blankingCount = 0;
 	StartUp.sustCount = 0;
 
+	//Check Switches
+	if(GPIO_ReadPin(Switch_1)){
+		Flags.diraction = Clockwise;
+	} else {
+		Flags.diraction = Anticlockwise;
+	}
 	SetDiraction(Flags.diraction);
+
+	if(GPIO_ReadPin(Switch_2)){
+		rpmRamp.mode = Const;
+		desiredRPM = rpmRamp.constRpm;
+	} else {
+		rpmRamp.mode = Alt;
+		rpmRamp.dir = Up;
+		desiredRPM = rpmRamp.minRpm;
+	}
+
 
 	// Initialize TMR7 and rpm Filter average with the value corresponding to the minimum motor speed
 	currentRPM = StartUp.initialRPM;
@@ -322,6 +350,28 @@ void SixStepCommutation::SpeedLoopController(){
 	}
 
 	pwmTimer->SetDuty(currentDuty);
+}
+
+void SixStepCommutation::RPMRamp(){
+
+	if(rpmRamp.mode == Const) { return; }
+
+	if(rpmRampDelay.GetState() == On) { return; }
+
+	if(rpmRamp.dir == Up){
+		desiredRPM++;
+		if(desiredRPM >= rpmRamp.maxRpm){
+			rpmRamp.dir = Down;
+		}
+		rpmRampDelay.Start(rpmRamp.step);
+	} else {
+		desiredRPM--;
+		if(desiredRPM <= rpmRamp.minRpm){
+			rpmRamp.dir = Up;
+		}
+		rpmRampDelay.Start(rpmRamp.step);
+	}
+
 }
 
 void SixStepCommutation::SetDiraction(bool dir){

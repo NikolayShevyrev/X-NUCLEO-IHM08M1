@@ -10,6 +10,7 @@
 
 #include "main.h"
 
+
 class Timer {
 protected:
 	TIM_TypeDef * timer_;
@@ -126,6 +127,9 @@ public:
 	}
 
 	void PWMStopState(){
+
+		__disable_irq();
+
 		WRITE_REG(TIM1->CCER, PWM_STOP_STATE.CCER);
 		WRITE_REG(TIM1->CCMR1, PWM_STOP_STATE.CCMR1);
 		WRITE_REG(TIM1->CCMR2, PWM_STOP_STATE.CCMR2);
@@ -133,6 +137,8 @@ public:
 		/* Generate Capture/Compare control update event */
 		SET_BIT(TIM1->EGR, TIM_EGR_COMG);
 		CLEAR_BIT(TIM1->SR, TIM_SR_COMIF);
+
+		__enable_irq();
 	}
 
 	uint16_t Getpwm100usFactor(){

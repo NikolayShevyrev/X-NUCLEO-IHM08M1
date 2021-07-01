@@ -13,10 +13,12 @@
 
 // LEDs
 const gpio_t LedX(GPIOB, 2);
-const gpio_t DebugPin_1(GPIOC, 8);
 
 // Buttons
-const gpio_t Button(GPIOC, 13);
+const gpio_t Button_1(GPIOC, 13);
+const gpio_t Button_2(GPIOB, 7);
+const gpio_t Switch_1(GPIOC, 8);
+const gpio_t Switch_2(GPIOC, 6);
 
 // PWM Outputs
 const gpio_t UH(GPIOA, 8);
@@ -71,14 +73,16 @@ void GPIO_Init(void){
 	 * User LEDs
 	 * PB2 = LEDX Red
 	 */
-	GPIO_OutputPinInit(LedX, PushPull, High, NoPull);
-	GPIO_OutputPinInit(DebugPin_1, PushPull, High, NoPull);
+	GPIO_OutputPinInit(LedX, 	PushPull, High, 	NoPull);
 	GPIO_OutputPinInit(I2C_DIO, PushPull, VeryHigh, NoPull);
 	GPIO_OutputPinInit(I2C_CLK, PushPull, VeryHigh, NoPull);
 
 	/*
 	 * User Button = PC13
 	 */
-	GPIO_InputPinInit(Button, NoPull);
+	GPIO_InputPinInit(Button_1, NoPull);
+	GPIO_InputPinInit(Button_2, NoPull);
+	GPIO_InputPinInit(Switch_1, NoPull);
+	GPIO_InputPinInit(Switch_2, NoPull);
 
 }

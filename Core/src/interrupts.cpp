@@ -46,7 +46,7 @@ void TIM6_DAC_IRQHandler(void) {
 	extern SixStepCommutation motor;
 	//extern state currentState;
 
-	DEBUGPIN_1_OFF();
+	//DEBUGPIN_1_OFF();
 
 	motor.Commutation();
 

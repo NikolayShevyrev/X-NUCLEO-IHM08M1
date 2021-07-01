@@ -18,9 +18,9 @@ void SystemClock_Config(void);
 #define LEDX_OFF() SET_BIT(GPIOB->BSRR, (GPIO_BSRR_BS_0  << (2+16)));
 #define LEDX_TOGGLE() GPIOB->ODR ^= (GPIO_ODR_0 << 2);
 
-#define DEBUGPIN_1_ON() SET_BIT(GPIOC->BSRR, (GPIO_BSRR_BS_0  << 8));
-#define DEBUGPIN_1_OFF() SET_BIT(GPIOC->BSRR, (GPIO_BSRR_BS_0  << (8+16)));
-#define DEBUGPIN_1_TOGGLE() GPIOC->ODR ^= (GPIO_ODR_0 << 8);
+//#define DEBUGPIN_1_ON() SET_BIT(GPIOC->BSRR, (GPIO_BSRR_BS_0  << 8));
+//#define DEBUGPIN_1_OFF() SET_BIT(GPIOC->BSRR, (GPIO_BSRR_BS_0  << (8+16)));
+//#define DEBUGPIN_1_TOGGLE() GPIOC->ODR ^= (GPIO_ODR_0 << 8);
 
 /* Defines -------------------------------------------------------------------*/
 #define FPWM (uint16_t)20000

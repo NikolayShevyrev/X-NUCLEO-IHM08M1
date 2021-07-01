@@ -23,6 +23,17 @@ enum Diraction {
 	Clockwise = true,
 	Anticlockwise = false
 };
+
+enum RPMMode {
+	Const,
+	Alt
+};
+
+enum RpmRampDir {
+	Up,
+	Down
+};
+
 enum StartUpState {
 	StartUpOff,
 	AlignmentOn,
@@ -108,6 +119,18 @@ private:
 		bool preCommutation = false;
 		bool bemfDetection = false;
 	} Flags;
+
+	struct {
+		RPMMode mode = Const;
+		uint16_t minRpm;
+		uint16_t maxRpm;
+		uint16_t constRpm;
+		uint32_t time;
+		uint32_t step;
+		RpmRampDir dir = Up;
+	} rpmRamp;
+
+	NonBlockingDelay rpmRampDelay;
 
 	struct {
 		float bemf;
@@ -227,6 +250,8 @@ private:
 	void Align();
 
     void SpeedLoopController();
+
+    void RPMRamp();
 
     void CalcSector();
 

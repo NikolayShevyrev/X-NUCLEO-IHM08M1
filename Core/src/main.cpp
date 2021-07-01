@@ -16,7 +16,8 @@
 #include "delay.h"
 #include "TM1637.h"
 
-void CheckButton(void);
+void CheckButton1(void);
+void CheckButton2(void);
 
 /* Variables ---------------------------------------------------------*/
 Timer1 timer1;
@@ -63,10 +64,12 @@ int main(){
 	/* Init Motor */
 	motor.Init(motorSettings);
 
-	motor.SetDiraction(Clockwise);
+	//motor.SetDiraction(Clockwise);
 
-	timer1.Start();
+	timer1.PWMStopState();
 	timer1.PWMOutputsOn();
+	timer1.Start();
+
 
 	display.initDisplay(BRIGHT);
 	display.display(0x00, '-');
@@ -75,7 +78,8 @@ int main(){
 	display.display(0x03, 'Y');
 
 	while(1){
-		CheckButton();
+		CheckButton1();
+		CheckButton2();
 	}
 }
 
@@ -83,20 +87,31 @@ int main(){
   * @brief  Does stuff if user button was pressed
   * @retval None
   */
-void CheckButton(void){
-	if(!GPIO_ReadPin(Button)){
+void CheckButton1(void){
+
+	if(!GPIO_ReadPin(Button_1)){
 		DelayUS(100);
-		while(!GPIO_ReadPin(Button)){
+		while(!GPIO_ReadPin(Button_1)){
 			DelayUS(100);
 		}
 		/* Do somesthing */
 		if(currentState == Stopped) {
 			currentState = Starting;
 		}
-		else {
+
+	}
+}
+
+void CheckButton2(void){
+
+	if(!GPIO_ReadPin(Button_2)){
+		DelayUS(100);
+		while(!GPIO_ReadPin(Button_2)){
+			DelayUS(100);
+		}
+		/* Do somesthing */
+		if(currentState != Stopped && currentState != Fault) {
 			currentState = Stopping;
 		}
-		//GPIO_SetPin(LedX);
 	}
-
 }

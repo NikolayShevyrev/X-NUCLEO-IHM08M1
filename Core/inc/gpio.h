@@ -27,10 +27,12 @@ public:
 // LEDs
 extern const gpio_t LedX;
 extern const gpio_t Led2;
-extern const gpio_t DebugPin_1;
 
 // Buttons
-extern const gpio_t Button;
+extern const gpio_t Button_1;
+extern const gpio_t Button_2;
+extern const gpio_t Switch_1;
+extern const gpio_t Switch_2;
 
 // PWM Outputs
 extern const gpio_t UH;
