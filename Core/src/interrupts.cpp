@@ -66,7 +66,7 @@ void DMA1_Channel1_IRQHandler(void) {
 	motor.SetDCVoltage();
 	motor.SetTemperature();
 
-	motor.OverTempProtection(currentState);
+	motor.Protection(currentState);
 
 	dma1ch1.TransferCompleteInterruptFlagClear();
 
@@ -101,9 +101,9 @@ void ADC1_2_IRQHandler(void) {
 	extern state currentState;
 
 	if(adc1.AWD1GetInterruptFlag() == true){
+		currentState = Fault;
 		motor.Stop();
 		adc1.AWD1ClearInterruptFlag();
-		currentState = Fault;
 		display.display(0x00, '-');
 		display.display(0x01, 'O');
 		display.display(0x02, 'V');

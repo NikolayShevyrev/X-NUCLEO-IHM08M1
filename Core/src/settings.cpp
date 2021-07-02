@@ -18,7 +18,7 @@ void FillMainSettings(MainSettings& settings){
 void FillSixStepCommSettings(SixStepCommSettings& settings){
 	settings.fpwm 			= 20000;
 	settings.pole_pairs 	= 4;//12;
-	settings.startup_duty 	= 0.2;//0.32;
+	settings.startup_duty 	= 0.15;//0.32;
 	settings.initialRPM		= 150;//6;
 	settings.accelaration	= 0.99; // Should be less then 1
 	settings.startup_rpm 	= 250;//25;

@@ -66,18 +66,45 @@ void SixStepCommutation::Run(state& currentState){
 			RPMRamp();
 			if(stallCount > stallLimit){
 				currentState = Fault;
+				display.display(0x00, '-');
+				display.display(0x01, 'S');
+				display.display(0x02, 'T');
+				display.display(0x03, 'L');
 			}
 			break;
 		case Stopping:
-			display.display(0x00, 'S');
-			display.display(0x01, 'T');
-			display.display(0x02, 'O');
-			display.display(0x03, 'P');
-			this->Stop();
-			currentState = Stopped;
+			if(Flags.stopping == false){
+				this->Stop();
+				display.display(0x00, 'S');
+				display.display(0x01, 'T');
+				display.display(0x02, 'O');
+				display.display(0x03, 'P');
+			} else {
+				stopDelay.Tick();
+			}
+			if(stopDelay.GetState() == Off) {
+				Flags.stopping = false;
+				currentState = Stopped;
+				display.display(0x00, '-');
+				display.display(0x01, 'r');
+				display.display(0x02, 'D');
+				display.display(0x03, 'Y');
+			}
 			break;
 		case Fault:
-			this->Stop();
+			if(Flags.stopping == false) {
+				this->Stop();
+			} else {
+				stopDelay.Tick();
+			}
+			if(stopDelay.GetState() == Off) {
+				Flags.stopping = false;
+				currentState = Stopped;
+				display.display(0x00, '-');
+				display.display(0x01, 'r');
+				display.display(0x02, 'D');
+				display.display(0x03, 'Y');
+			}
 			break;
 		default:
 			break;
@@ -150,7 +177,7 @@ void SixStepCommutation::BemfDetection(state& currentState){
 void SixStepCommutation::Commutation(){
 	extern state currentState;
 
-	if(currentState != Stopped && currentState != Stopping){
+	if(currentState == Running || currentState == Starting){
 
 		bemfFilter.value = 0;
 		blankingCount = 0;
@@ -193,6 +220,9 @@ void SixStepCommutation::Stop(){
 	bemfFilter.value = 0;
 	blankingCount = 0;
 	stallCount = 0;
+
+	Flags.stopping = true;
+	stopDelay.Start(stopTime);
 
 }
 
@@ -258,6 +288,7 @@ void SixStepCommutation::Align(){
 void SixStepCommutation::Ramp(){
 
 	extern tm1637 display;
+	extern state currentState;
 
 	if(startUpDelay.GetState() == On) { return; }
 
@@ -283,6 +314,7 @@ void SixStepCommutation::Ramp(){
 			if(StartUp.Time.sector < MIN_SECTOR_TIME) { StartUp.Time.sector = MIN_SECTOR_TIME; }
 		}
 
+		currentRPM = (float)timer_to_rpm/rpmFilter.Calc(StartUp.Time.sector*100);
 	}
 
 	pwmTimer->SwitchCommSector(commSector);
@@ -293,6 +325,18 @@ void SixStepCommutation::Ramp(){
 	}
 
 	startUpDelay.Start(StartUp.Time.sector * pwmTimer->Getpwm100usFactor());
+
+
+	if (currentRPM >= maxRPM) {
+		currentState = Fault;
+		if(Flags.stopping == false){
+			Stop();
+		}
+		display.display(0x00, '-');
+		display.display(0x01, 'D');
+		display.display(0x02, 'N');
+		display.display(0x03, 'S');
+	}
 }
 
 void SixStepCommutation::CalcSector(){

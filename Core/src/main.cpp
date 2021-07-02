@@ -110,7 +110,7 @@ void CheckButton2(void){
 			DelayUS(100);
 		}
 		/* Do somesthing */
-		if(currentState != Stopped && currentState != Fault) {
+		if(currentState == Running || currentState == Starting) {
 			currentState = Stopping;
 		}
 	}
