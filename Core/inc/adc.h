@@ -318,7 +318,7 @@ public:
 	}
 
 	void AWD1ClearInterruptFlag() const {
-		CLEAR_BIT(base_->ISR, ADC_ISR_AWD1);
+		SET_BIT(base_->ISR, ADC_ISR_AWD1);
 	}
 
 	void AWD2InterruptEnable() const {

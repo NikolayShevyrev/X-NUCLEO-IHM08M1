@@ -134,7 +134,7 @@ private:
 	NonBlockingDelay rpmRampDelay;
 
 	NonBlockingDelay stopDelay;
-	uint32_t stopTime = 200000;//1200000;
+	uint32_t stopTime = 100000;//600000; // = t(s) * fpwm
 
 	struct {
 		float bemf;
