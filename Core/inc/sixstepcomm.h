@@ -105,6 +105,7 @@ private:
 
 	NonBlockingDelay startUpDelay;
 	NonBlockingDelay displayDelay;
+
 	dFilter<uint32_t, 4> rpmFilter;
 
 	MotorStartUp StartUp;
@@ -134,7 +135,10 @@ private:
 	NonBlockingDelay rpmRampDelay;
 
 	NonBlockingDelay stopDelay;
-	uint32_t stopTime = 100000;//600000; // = t(s) * fpwm
+	uint32_t stopTime = 1200000;//100000;//600000; // = t(s) * fpwm
+
+	NonBlockingDelay speedLoopDelay;
+	uint32_t speedLoopTime = 2000; // = t(s) * fpwm
 
 	struct {
 		float bemf;

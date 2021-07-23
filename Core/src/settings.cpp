@@ -28,8 +28,8 @@ void FillSixStepCommSettings(SixStepCommSettings& settings){
 
 	//RPM Ramp
 	settings.rampMinRpm		= 50;
-	settings.rampMaxRpm		= 100;
+	settings.rampMaxRpm		= 120;
 	settings.rampConstRpm	= 50;
-	settings.rampTime		= 300; // In seconds
+	settings.rampTime		= 420; // In seconds
 
 }
