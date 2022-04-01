@@ -7,7 +7,8 @@
 
 #include "settings.h"
 
-void FillMainSettings(MainSettings& settings){
+void FillMainSettings(MainSettings& settings)
+{
 	settings.fpwm 					= 20000;
 	settings.numberOfConversions 	= 6;
 	settings.currentConvCoef 		= (float)(0.001F / (float)settings.numberOfConversions);
@@ -15,7 +16,8 @@ void FillMainSettings(MainSettings& settings){
 	settings.bemfConvCoef 			= (float)(0.01F / (float)settings.numberOfConversions);
 }
 
-void FillSixStepCommSettings(SixStepCommSettings& settings){
+void FillSixStepCommSettings(SixStepCommSettings& settings)
+{
 	settings.fpwm 			= 20000;
 	settings.pole_pairs 	= 12;
 	settings.startup_duty 	= 0.32;
@@ -26,10 +28,11 @@ void FillSixStepCommSettings(SixStepCommSettings& settings){
 	settings.desired_rpm 	= 50;
 	settings.rotor_align_t	= 150;
 
-	//RPM Ramp
-	settings.rampMinRpm		= 70;
-	settings.rampMaxRpm		= 120;
-	settings.rampConstRpm	= 70;
-	settings.rampTime		= 420; // In seconds
-
+	/**
+	 * RPM Ramp
+	 */
+	settings.rampMinRpm		= RAMP_MIN_RPM;
+	settings.rampMaxRpm		= RAMP_MAX_RMP;
+	settings.rampTime		= RAMP_TIME;
+	settings.rampConstRpm	= CONST_RPM;
 }

@@ -9,7 +9,8 @@
 #include "adc.h"
 
 
-void SixStepCommutation::Init(const SixStepCommSettings& settings){
+void SixStepCommutation::Init(const SixStepCommSettings& settings)
+{
 	StartUp.duty 			= (uint16_t)((float)pwmTimer->GetPWMPeriod() * settings.startup_duty);
 	StartUp.initialRPM		= settings.initialRPM;
 	StartUp.acceleration	= settings.accelaration;
@@ -36,27 +37,31 @@ void SixStepCommutation::Init(const SixStepCommSettings& settings){
 	blankingLimit 	= 4;
 
 	//RPM Ramp
-	rpmRamp.minRpm 	= settings.rampMinRpm;
-	rpmRamp.maxRpm 	= settings.rampMaxRpm;
+	rpmRamp.minRpm 		= settings.rampMinRpm;
+	rpmRamp.maxRpm 		= settings.rampMaxRpm;
 	rpmRamp.constRpm 	= settings.rampConstRpm;
-	rpmRamp.time 	= settings.rampTime;
-	rpmRamp.step	= (settings.fpwm * rpmRamp.time) / (rpmRamp.maxRpm - rpmRamp.minRpm);
+	rpmRamp.time 		= settings.rampTime;
+	rpmRamp.step		= (settings.fpwm * rpmRamp.time) / (rpmRamp.maxRpm - rpmRamp.minRpm);
 
 }
 
-void SixStepCommutation::Run(state& currentState){
-
+void SixStepCommutation::Run(state& currentState)
+{
 	extern tm1637 display;
 
-	switch(currentState){
+	switch(currentState)
+	{
 		case Stopped:
 			break;
 		case Starting:
 			startUpDelay.Tick();
 			displayDelay.Tick();
-			if(StartUp.state == StartUpOff){
+			if(StartUp.state == StartUpOff)
+			{
 				Align();
-			} else {
+			}
+			else
+			{
 				Ramp();
 			}
 			break;
@@ -65,7 +70,8 @@ void SixStepCommutation::Run(state& currentState){
 			rpmRampDelay.Tick();
 			speedLoopDelay.Tick();
 			RPMRamp();
-			if(stallCount > stallLimit){
+			if(stallCount > stallLimit)
+			{
 				currentState = Fault;
 				display.display(0x00, '-');
 				display.display(0x01, 'S');
@@ -74,16 +80,20 @@ void SixStepCommutation::Run(state& currentState){
 			}
 			break;
 		case Stopping:
-			if(Flags.stopping == false){
+			if(Flags.stopping == false)
+			{
 				this->Stop();
 				display.display(0x00, 'S');
 				display.display(0x01, 'T');
 				display.display(0x02, 'O');
 				display.display(0x03, 'P');
-			} else {
+			}
+			else
+			{
 				stopDelay.Tick();
 			}
-			if(stopDelay.GetState() == Off) {
+			if(stopDelay.GetState() == Off)
+			{
 				Flags.stopping = false;
 				currentState = Stopped;
 				display.display(0x00, '-');
@@ -93,18 +103,25 @@ void SixStepCommutation::Run(state& currentState){
 			}
 			break;
 		case Fault:
-			if(Flags.stopping == false) {
+			if(Flags.stopping == false)
+			{
 				this->Stop();
-			} else {
+			}
+			else
+			{
 				stopDelay.Tick();
 			}
-			if(stopDelay.GetState() == Off) {
+			if(stopDelay.GetState() == Off)
+			{
 				Flags.stopping = false;
 				currentState = Stopped;
 				display.display(0x00, '-');
 				display.display(0x01, 'r');
 				display.display(0x02, 'D');
 				display.display(0x03, 'Y');
+				#ifdef AUTO_RESTART
+					currentState = Starting;
+				#endif
 			}
 			break;
 		default:
