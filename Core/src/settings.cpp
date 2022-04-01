@@ -27,9 +27,9 @@ void FillSixStepCommSettings(SixStepCommSettings& settings){
 	settings.rotor_align_t	= 150;
 
 	//RPM Ramp
-	settings.rampMinRpm		= 50;
+	settings.rampMinRpm		= 70;
 	settings.rampMaxRpm		= 120;
-	settings.rampConstRpm	= 50;
+	settings.rampConstRpm	= 70;
 	settings.rampTime		= 420; // In seconds
 
 }
