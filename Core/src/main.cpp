@@ -77,10 +77,19 @@ int main(){
 	display.display(0x02, 'D');
 	display.display(0x03, 'Y');
 
-	while(1){
-		CheckButton1();
-		CheckButton2();
+	#ifdef POWER_ON_STARTUP
+		DelayMS(60000);
+		currentState = Starting;
+	#endif
+
+	while(1)
+	{
+		#ifndef POWER_ON_STARTUP
+			CheckButton1();
+			CheckButton2();
+		#endif
 	}
+
 }
 
 /**
