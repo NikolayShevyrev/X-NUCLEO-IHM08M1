@@ -18,6 +18,7 @@
 
 void CheckButton1(void);
 void CheckButton2(void);
+void CheckSwitch1(void);
 
 /* Variables ---------------------------------------------------------*/
 Timer1 timer1;
@@ -85,8 +86,12 @@ int main(){
 	while(1)
 	{
 		#ifndef POWER_ON_STARTUP
-			CheckButton1();
-			CheckButton2();
+			#ifdef SWITCH_STARTUP
+				CheckSwitch1();
+			#else
+				CheckButton1();
+				CheckButton2();
+			#endif
 		#endif
 	}
 
@@ -120,6 +125,24 @@ void CheckButton2(void){
 		}
 		/* Do somesthing */
 		if(currentState == Running || currentState == Starting) {
+			currentState = Stopping;
+		}
+	}
+}
+
+void CheckSwitch1(void)
+{
+	if(GPIO_ReadPin(Switch_1))
+	{
+		if(currentState == Stopped)
+		{
+			currentState = Starting;
+		}
+	}
+	else
+	{
+		if(currentState == Running || currentState == Starting)
+		{
 			currentState = Stopping;
 		}
 	}

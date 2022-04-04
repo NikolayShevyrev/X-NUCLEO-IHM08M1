@@ -262,12 +262,16 @@ void SixStepCommutation::Align(){
 	StartUp.sustCount = 0;
 
 	//Check Switches
-	if(GPIO_ReadPin(Switch_1)){
+	#ifndef SWITCH_STARTUP
+		if(GPIO_ReadPin(Switch_1)){
+			Flags.diraction = Clockwise;
+		} else {
+			Flags.diraction = Anticlockwise;
+		}
+	#else
 		Flags.diraction = Clockwise;
-	} else {
-		Flags.diraction = Anticlockwise;
-	}
-	SetDiraction(Flags.diraction);
+	#endif
+		SetDiraction(Flags.diraction);
 
 	if(GPIO_ReadPin(Switch_2)){
 		rpmRamp.mode = Const;
