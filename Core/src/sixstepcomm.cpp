@@ -96,10 +96,10 @@ void SixStepCommutation::Run(state& currentState)
 			{
 				Flags.stopping = false;
 				currentState = Stopped;
-				display.display(0x00, 'r');
-				//display.display(0x01, 'r');
-				//display.display(0x02, 'D');
-				//display.display(0x03, 'Y');
+				display.display(0x00, '-');
+				display.display(0x01, 'r');
+				display.display(0x02, 'D');
+				display.display(0x03, 'Y');
 			}
 			break;
 		case Fault:
@@ -115,10 +115,10 @@ void SixStepCommutation::Run(state& currentState)
 			{
 				Flags.stopping = false;
 				currentState = Stopped;
-				display.display(0x00, '-');
-				display.display(0x01, 'r');
-				display.display(0x02, 'D');
-				display.display(0x03, 'Y');
+				display.display(0x00, 'r');
+				//display.display(0x01, 'r');
+				//display.display(0x02, 'D');
+				//display.display(0x03, 'Y');
 				#ifdef AUTO_RESTART
 					currentState = Starting;
 				#endif
