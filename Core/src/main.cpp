@@ -88,6 +88,7 @@ int main(){
 		#ifndef POWER_ON_STARTUP
 			#ifdef SWITCH_STARTUP
 				CheckSwitch1();
+				DelayMS(100);
 			#else
 				CheckButton1();
 				CheckButton2();

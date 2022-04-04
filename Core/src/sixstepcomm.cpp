@@ -73,7 +73,7 @@ void SixStepCommutation::Run(state& currentState)
 			if(stallCount > stallLimit)
 			{
 				currentState = Fault;
-				display.display(0x00, '-');
+				display.display(0x00, 'S');
 				display.display(0x01, 'S');
 				display.display(0x02, 'T');
 				display.display(0x03, 'L');
@@ -96,10 +96,10 @@ void SixStepCommutation::Run(state& currentState)
 			{
 				Flags.stopping = false;
 				currentState = Stopped;
-				display.display(0x00, '-');
-				display.display(0x01, 'r');
-				display.display(0x02, 'D');
-				display.display(0x03, 'Y');
+				display.display(0x00, 'r');
+				//display.display(0x01, 'r');
+				//display.display(0x02, 'D');
+				//display.display(0x03, 'Y');
 			}
 			break;
 		case Fault:
@@ -354,7 +354,7 @@ void SixStepCommutation::Ramp(){
 		if(Flags.stopping == false){
 			Stop();
 		}
-		display.display(0x00, '-');
+		display.display(0x00, 'S');
 		display.display(0x01, 'D');
 		display.display(0x02, 'N');
 		display.display(0x03, 'S');
