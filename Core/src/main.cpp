@@ -133,9 +133,11 @@ void CheckButton2(void){
 
 void CheckSwitch1(void)
 {
+	extern SixStepCommutation motor;
+
 	if(GPIO_ReadPin(Switch_1))
 	{
-		if(currentState == Stopped)
+		if(currentState == Stopped && motor.faultReset == false)
 		{
 			currentState = Starting;
 		}
@@ -145,6 +147,14 @@ void CheckSwitch1(void)
 		if(currentState == Running || currentState == Starting)
 		{
 			currentState = Stopping;
+		}
+		if(motor.faultReset == true)
+		{
+			motor.faultReset = false;
+			display.display(0x00, '-');
+			display.display(0x01, 'r');
+			display.display(0x02, 'D');
+			display.display(0x03, 'Y');
 		}
 	}
 }

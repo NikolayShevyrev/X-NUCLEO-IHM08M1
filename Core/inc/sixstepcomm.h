@@ -90,6 +90,11 @@ class SixStepCommutation {
 public:
 	uint32_t adc_data_bemf[3];
 	uint32_t adc_data[CONVERSIONS_COUNT*3];
+
+
+	bool faultReset	= false;
+
+
 private:
 	Timer1 * pwmTimer;
 	Timer4 * rpmTimer;

@@ -119,6 +119,9 @@ void SixStepCommutation::Run(state& currentState)
 				//display.display(0x01, 'r');
 				//display.display(0x02, 'D');
 				//display.display(0x03, 'Y');
+				#ifdef SWITCH_STARTUP
+					faultReset = true;
+				#endif
 				#ifdef AUTO_RESTART
 					currentState = Starting;
 				#endif
