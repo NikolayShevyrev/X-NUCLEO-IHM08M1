@@ -102,24 +102,30 @@ int main(){
   * @brief  Does stuff if user button was pressed
   * @retval None
   */
-void CheckButton1(void){
+void CheckButton1(void)
+{
+	extern SixStepCommutation motor;
 
-	if(!GPIO_ReadPin(Button_1)){
+	if(!GPIO_ReadPin(Button_1))
+	{
 		DelayUS(100);
 		while(!GPIO_ReadPin(Button_1)){
 			DelayUS(100);
 		}
 		/* Do somesthing */
-		if(currentState == Stopped) {
+		if(currentState == Stopped  && motor.faultReset == false) {
 			currentState = Starting;
 		}
 
 	}
 }
 
-void CheckButton2(void){
+void CheckButton2(void)
+{
+	extern SixStepCommutation motor;
 
-	if(!GPIO_ReadPin(Button_2)){
+	if(!GPIO_ReadPin(Button_2))
+	{
 		DelayUS(100);
 		while(!GPIO_ReadPin(Button_2)){
 			DelayUS(100);
@@ -128,6 +134,15 @@ void CheckButton2(void){
 		if(currentState == Running || currentState == Starting) {
 			currentState = Stopping;
 		}
+		if(motor.faultReset == true)
+		{
+			motor.faultReset = false;
+			display.display(0x00, '-');
+			display.display(0x01, 'r');
+			display.display(0x02, 'D');
+			display.display(0x03, 'Y');
+		}
+
 	}
 }
 

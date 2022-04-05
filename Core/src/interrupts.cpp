@@ -104,7 +104,7 @@ void ADC1_2_IRQHandler(void) {
 		currentState = Fault;
 		motor.Stop();
 		adc1.AWD1ClearInterruptFlag();
-		display.display(0x00, 'S');
+		display.display(0x00, '-');
 		display.display(0x01, 'O');
 		display.display(0x02, 'V');
 		display.display(0x03, 'V');

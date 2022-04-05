@@ -242,7 +242,7 @@ public:
 			if(Flags.stopping == false){
 				Stop();
 			}
-			display.display(0x00, 'S');
+			display.display(0x00, '-');
 			display.display(0x01, 'O');
 			display.display(0x02, 'V');
 			display.display(0x03, 'T');
@@ -253,7 +253,7 @@ public:
 			if(Flags.stopping == false){
 				Stop();
 			}
-			display.display(0x00, 'S');
+			display.display(0x00, '-');
 			display.display(0x01, 'L');
 			display.display(0x02, 'O');
 			display.display(0x03, 'V');
@@ -264,7 +264,7 @@ public:
 			if(Flags.stopping == false){
 				Stop();
 			}
-			display.display(0x00, 'S');
+			display.display(0x00, '-');
 			display.display(0x01, 'O');
 			display.display(0x02, 'V');
 			display.display(0x03, 'C');
