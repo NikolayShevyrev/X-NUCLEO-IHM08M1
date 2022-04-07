@@ -143,7 +143,7 @@ private:
 	uint32_t stopTime = 1200000;//100000;//600000; // = t(s) * fpwm
 
 	NonBlockingDelay speedLoopDelay;
-	uint32_t speedLoopTime = 2000; // = t(s) * fpwm
+	uint32_t speedLoopTime = 10000; // = t(s) * fpwm
 
 	struct {
 		float bemf;
