@@ -66,8 +66,8 @@ void SystemClock_Config(void);
 #define NTC_CONV_COEF 		(float)(0.00080586F / (float)CONVERSIONS_COUNT)
 
 #define MAX_TEMP 			(uint16_t)100
-#define MIN_DCVOLTAGE		(float)30.0
-#define MAX_DCCURRENT		(float)10.0
+#define MIN_DCVOLTAGE		(float)20.0
+#define MAX_DCCURRENT		(float)12.0
 
 //#define AWD1_HT				(uint16_t)(2.73F / 0.00080586F) // 100 degres
 #define AWD1_HT				(uint16_t)(58.F / 0.0154F)
