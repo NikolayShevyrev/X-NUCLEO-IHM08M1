@@ -152,6 +152,9 @@ private:
 		float temperature;
 	} Feedback;
 
+	dFilter<float, 500> dcCurrentFilter;
+	dFilter<float, 16> voltageFilter;
+
 	uint8_t commSector;
 	uint16_t comparatorOutputs;
 
@@ -192,16 +195,17 @@ public:
 		Flags.diraction = dir;
 	}
 
-	void SetDCCurrent(){
+	void SetDCCurrent()
+	{
 		float current = 0;
 		for(int i = 2 ; i < (CONVERSIONS_COUNT*3); i+=3){
 			current += adc_data[i];
 		}
-		Feedback.dcCurrent = (current * CURRENT_CONV_COEF);
+		Feedback.dcCurrent = dcCurrentFilter.Calc(current * CURRENT_CONV_COEF);
 	}
 
-	void SetDCVoltage(){
-		static dFilter<float, 16> voltageFilter;
+	void SetDCVoltage()
+	{
 		float voltage = 0;
 		for(int i = 1 ; i < (CONVERSIONS_COUNT*3); i+=3){
 			voltage += adc_data[i];
