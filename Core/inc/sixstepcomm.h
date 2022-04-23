@@ -117,14 +117,17 @@ private:
 	BEMF_Filter bemfFilter;
 	BEMF_Detection bemfDetection;
 
-	struct {
-		bool trainPI 	= true;
-		bool stopping	= false;
-		bool startUp 	= false;
-		bool runMotor	= false;
-		bool diraction	= true;
+	struct
+	{
+		bool trainPI	 	= true;
+		bool stopping		= false;
+		bool startUp 		= false;
+		bool runMotor		= false;
+		bool diraction		= true;
 		bool preCommutation = false;
-		bool bemfDetection = false;
+		bool bemfDetection	= false;
+		bool overVoltage	= false;
+		bool overCurrent	= false;
 	} Flags;
 
 	struct {
@@ -238,12 +241,16 @@ public:
 		Feedback.temperature = ((float)index * 5.f) - 40.f;
 	}
 
-	void Protection(state& currentState){
+	void Protection(state& currentState)
+	{
 		extern tm1637 display;
 
-		if(Feedback.temperature >= MAX_TEMP){
+		/*** Temperature protection ***/
+		if(Feedback.temperature >= MAX_TEMP)
+		{
 			currentState = Fault;
-			if(Flags.stopping == false){
+			if(Flags.stopping == false)
+			{
 				Stop();
 			}
 			display.display(0x00, 'S');
@@ -252,9 +259,12 @@ public:
 			display.display(0x03, 'T');
 		}
 
-		if(Feedback.dcVoltage <= MIN_DCVOLTAGE){
+		/***  DC Voltage protection ***/
+		if(Feedback.dcVoltage <= MIN_DCVOLTAGE)
+		{
 			currentState = Fault;
-			if(Flags.stopping == false){
+			if(Flags.stopping == false)
+			{
 				Stop();
 			}
 			display.display(0x00, 'S');
@@ -262,16 +272,35 @@ public:
 			display.display(0x02, 'O');
 			display.display(0x03, 'V');
 		}
+		if(Feedback.dcVoltage >= DCVOLTAGE_THRESHOLD)
+		{
+			Flags.overVoltage = true;
+		}
+		else
+		{
+			Flags.overVoltage = false;
+		}
 
-		if(Feedback.dcCurrent > MAX_DCCURRENT){
+		/*** DC Current protection ***/
+		if(Feedback.dcCurrent > MAX_DCCURRENT)
+		{
 			currentState = Fault;
-			if(Flags.stopping == false){
+			if(Flags.stopping == false)
+			{
 				Stop();
 			}
 			display.display(0x00, 'S');
 			display.display(0x01, 'O');
 			display.display(0x02, 'V');
 			display.display(0x03, 'C');
+		}
+		if(Feedback.dcCurrent >= DCCURRENT_THRESHOLD)
+		{
+			Flags.overCurrent = true;
+		}
+		else
+		{
+			Flags.overCurrent = false;
 		}
 	}
 

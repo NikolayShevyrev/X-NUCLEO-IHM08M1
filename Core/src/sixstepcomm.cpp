@@ -414,10 +414,28 @@ void SixStepCommutation::SpeedLoopController(){
 
 	if(speedLoopDelay.GetState() == On){ return; }
 
-	if(currentRPM < desiredRPM){
-		if(currentDuty < maxDuty) currentDuty++;
-	} else if(currentRPM > desiredRPM){
-		if(currentDuty > minDuty) currentDuty--;
+	if (Flags.overCurrent != true && Flags.overVoltage != true)
+	{
+		if(currentRPM < desiredRPM)
+		{
+			if(currentDuty < maxDuty) currentDuty++;
+		}
+		else if(currentRPM > desiredRPM)
+		{
+			if(currentDuty > minDuty) currentDuty--;
+		}
+	}
+
+	if (Flags.overVoltage == true)
+	{
+		// TODO:
+		// if(currentDuty < maxDuty) currentDuty++;
+	}
+
+	if (Flags.overCurrent == true)
+	{
+		// TODO:
+		// if(currentDuty > minDuty) currentDuty--;
 	}
 
 	pwmTimer->SetDuty(currentDuty);
