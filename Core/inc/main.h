@@ -72,6 +72,8 @@ void SystemClock_Config(void);
 #define DCVOLTAGE_THRESHOLD	(float)52.0
 #define DCCURRENT_THRESHOLD	(float)10.0
 
+#define MAX_RPM				(uint32_t)150
+
 //#define AWD1_HT				(uint16_t)(2.73F / 0.00080586F) // 100 degres
 #define AWD1_HT				(uint16_t)(58.F / 0.0154F)
 #define AWD1_LT				0

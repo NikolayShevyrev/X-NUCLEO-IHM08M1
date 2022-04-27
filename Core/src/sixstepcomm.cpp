@@ -170,6 +170,21 @@ void SixStepCommutation::BemfDetection(state& currentState){
 		if(timer_avg == 0) { timer_avg = 1; }
 		currentRPM = timer_to_rpm/timer_avg;
 
+		/*** Max RPM Protection ***/
+		if(currentRPM >= MAX_RPM)
+		{
+			currentState = Fault;
+			if(Flags.stopping == false)
+			{
+				Stop();
+			}
+			display.display(0x00, 'S');
+			display.display(0x01, 'O');
+			display.display(0x02, 'V');
+			display.display(0x03, 'r');
+		}
+
+
 
 		commutationTime = timer_avg >> 1;
 		if(commutationTime < 1){
