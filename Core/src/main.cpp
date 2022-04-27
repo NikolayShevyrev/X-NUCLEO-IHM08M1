@@ -45,6 +45,9 @@ int main(){
 	/* Configure the system clock */
 	SystemClock_Config();
 
+	/* Power On Delay */
+	DelayMS(1000);
+
 	/* Settings */
 	FillSixStepCommSettings(motorSettings);
 
@@ -73,6 +76,13 @@ int main(){
 
 
 	display.initDisplay(BRIGHT);
+	display.display(0x00, '-');
+	display.display(0x01, '-');
+	display.display(0x02, '-');
+	display.display(0x03, '-');
+
+	DelayMS(40000);
+
 	display.display(0x00, '-');
 	display.display(0x01, 'r');
 	display.display(0x02, 'D');
