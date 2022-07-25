@@ -146,7 +146,7 @@ private:
 	uint32_t stopTime = 1200000;//100000;//600000; // = t(s) * fpwm
 
 	NonBlockingDelay speedLoopDelay;
-	uint32_t speedLoopTime = 10000; // = t(s) * fpwm
+	uint32_t speedLoopTime = 2000; // = t(s) * fpwm
 
 	struct {
 		float bemf;
@@ -155,7 +155,7 @@ private:
 		float temperature;
 	} Feedback;
 
-	dFilter<float, 500> dcCurrentFilter;
+	dFilter<float, 16> dcCurrentFilter;
 	dFilter<float, 16> voltageFilter;
 
 	uint8_t commSector;
@@ -204,7 +204,8 @@ public:
 		for(int i = 2 ; i < (CONVERSIONS_COUNT*3); i+=3){
 			current += adc_data[i];
 		}
-		Feedback.dcCurrent = dcCurrentFilter.Calc(current * CURRENT_CONV_COEF);
+		current = current * CURRENT_CONV_COEF;
+		Feedback.dcCurrent = dcCurrentFilter.Calc(current);
 	}
 
 	void SetDCVoltage()

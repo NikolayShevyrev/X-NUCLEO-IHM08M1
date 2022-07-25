@@ -444,13 +444,13 @@ void SixStepCommutation::SpeedLoopController(){
 	if (Flags.overVoltage == true)
 	{
 		// TODO:
-		// if(currentDuty < maxDuty) currentDuty++;
+		 if(currentDuty < maxDuty) currentDuty++;
 	}
 
 	if (Flags.overCurrent == true)
 	{
 		// TODO:
-		// if(currentDuty > minDuty) currentDuty--;
+		 if(currentDuty > minDuty) currentDuty--;
 	}
 
 	pwmTimer->SetDuty(currentDuty);

@@ -81,12 +81,12 @@ int main(){
 	display.display(0x02, '-');
 	display.display(0x03, '-');
 
-	DelayMS(40000);
+	//DelayMS(1000);
 
-	display.display(0x00, '-');
-	display.display(0x01, 'r');
-	display.display(0x02, 'D');
-	display.display(0x03, 'Y');
+	//display.display(0x00, '-');
+	//display.display(0x01, 'r');
+	//display.display(0x02, 'D');
+	//display.display(0x03, 'Y');
 
 	#ifdef POWER_ON_STARTUP
 		DelayMS(60000);

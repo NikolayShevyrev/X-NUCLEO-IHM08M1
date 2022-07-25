@@ -67,10 +67,10 @@ void SystemClock_Config(void);
 
 #define MAX_TEMP 			(uint16_t)100
 #define MIN_DCVOLTAGE		(float)20.0
-#define MAX_DCCURRENT		(float)12.0
+#define MAX_DCCURRENT		(float)10.0
 
 #define DCVOLTAGE_THRESHOLD	(float)52.0
-#define DCCURRENT_THRESHOLD	(float)10.0
+#define DCCURRENT_THRESHOLD	(float)8.0
 
 #define MAX_RPM				(uint32_t)150
 
